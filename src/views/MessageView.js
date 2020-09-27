@@ -1,37 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, Component } from "react";
 import { FlatList, StyleSheet, TextInput, View, Button } from "react-native";
 import Message from "./../components/message";
+import {connect} from 'react-redux';
 
-export default function MessageView() {
+function MessageView(props) {
   const [enteredText, setEnteredText] = useState("");
-  const [messageList, setMessageList] = useState([]);
-  //const [msgIndex, setMsgIndex] = useState(1);
-  //const [messageRef, setmessageRef] = useState(undefined);
-
-  let index = 1;
-  let messageRef = undefined;
+  const [messageRef, setmessageRef] = useState(undefined);
 
   const goalInputHandler = (enteredText) => {
     setEnteredText(enteredText);
   };
 
   const addGoalHandler = () => {
-    setMessageList((currentGoals) => [
-      ...currentGoals,
-      { id: index++, value: enteredText },
-    ]);
+    props.newMessage(enteredText);
     messageRef.scrollToEnd({ animated: true });
   };
 
   return (
     <View style={styles.screen}>
       <FlatList
-        ref={(ref) => (messageRef = ref)}
+        ref={(ref) => (setmessageRef(ref))}
         onContentSizeChange={() => {
           messageRef.scrollToEnd({ animated: true });
         }}
         keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
-        data={messageList}
+        data={props.messageList}
         renderItem={(itemData) => <Message content={itemData.item.value} />}
       />
       <View style={styles.inputContainer}>
@@ -46,6 +39,23 @@ export default function MessageView() {
     </View>
   );
 }
+
+// Imported Values
+function mapStateToProps(state) {
+  return {
+    messageList: state.messageList,
+  };
+}
+
+// Dispatch Actions
+function mapDispatchToProps(dispatch) {
+  return {
+    newMessage: (msg) => dispatch({ type: 'NEW_MESSAGE', value: msg }),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageView);
+
 
 const styles = StyleSheet.create({
   container: {
