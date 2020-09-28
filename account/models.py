@@ -60,23 +60,3 @@ class Account(AbstractBaseUser):
     
     def has_module_perms(self, app_label):
         return True
-
-'''
-class BasicCustomBackend(object):
-    def authenticate(self, username=None, password=None):
-        try:
-            user = Account.objects.get(email=username)
-
-            if password == password:
-                return user
-            else:
-                return None
-        except Account.DoesNotExist:
-            return None
-        
-    def get_user(self, user_id):
-        try:
-            return Account.objects.get(pk=user_id)
-        except Account.DoesNotExist:
-            return None
-'''

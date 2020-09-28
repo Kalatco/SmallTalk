@@ -2,10 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from account.forms import RegistrationForm, AccountAuthenticationForm
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
-from jose import jws
-import datetime
-import json
 
 def registration_view(request):
     if request.POST:
@@ -50,18 +46,6 @@ def login_view(request):
         return JsonResponse({ 'message': 'not logged in' })
 
 
-@login_required
 def logout_view(request):
     logout(request)
     return JsonResponse({ 'message': 'logged out' })
-
-
-def create_jwt(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        email = data['email']
-        password = data['password']
-        user = authenticate(username=email, password=password)
-        expiry = datetime.date.today() + datetime.timedelta(days=50)
-        token = jws.sign({'username': user.username, 'expiry': expiry}, 'seKre8',  algorithm='HS256')
-        return HttpResponse(token)

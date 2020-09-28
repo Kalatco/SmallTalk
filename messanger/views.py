@@ -1,26 +1,45 @@
-from django.http import HttpResponse
-from .models import Group, Chat, Message
-from django.core import serializers
-from django.contrib.auth.decorators import login_required
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
-#def users(request):
-#    users = User.objects.all()
-#    user_list = serializers.serialize('json', users)
-#    return HttpResponse(user_list, content_type="text/json-comment-filtered")
+from messanger.models import Group, Chat, Message
+from messanger.serializers import GroupSerializer, ChatSerializer, MessageSerializer
 
-#def groups(request):
-#    groups = User.objects.all()
-#    groups_list = serializers.serialize('json', groups)
-#    return HttpResponse(groups_list, content_type="text/json-comment-filtered")
+@api_view(['GET'])
+def api_detail_group(request):
+    try:
+        groups = Group.objects.all()
+    except Group.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    return_list = []
+    for group in groups:
+        serializer = GroupSerializer(group)
+        return_list.append(serializer.data)
+    return Response(return_list)
 
-@login_required
-def chats(request, group_id):
-    chats = Chat.objects.filter(group_id=group_id)
-    chats_list = serializers.serialize('json', chats)
-    return HttpResponse(chats_list, content_type="text/json-comment-filtered")
+@api_view(['GET'])
+def api_detail_chat(request, group_id):
+    try:
+        chats = Chat.objects.filter(group_id=group_id)
+    except Chat.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-@login_required
-def messages(request, chat_id):
-    messages = Message.objects.filter(chat_id=chat_id)
-    messages_list = serializers.serialize('json', messages)
-    return HttpResponse(messages_list, content_type="text/json-comment-filtered")
+    return_list = []
+    for chat in chats:
+        serializer = ChatSerializer(chat)
+        return_list.append(serializer.data)
+    return Response(return_list)
+
+@api_view(['GET'])
+def api_detail_message(request, chat_id):
+    try:
+        messages = Message.objects.filter(chat_id=chat_id)
+    except Message.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    return_list = []
+    for message in messages:
+        serializer = MessageSerializer(message)
+        return_list.append(serializer.data)
+    return Response(return_list)
