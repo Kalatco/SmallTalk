@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from messanger.models import Group, Chat, Message, Account
+from messenger.models import Group, Chat, Message, Account
 
 admin.site.register(Group)
 admin.site.register(Chat)

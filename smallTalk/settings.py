@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     # My apps
-    'messanger',
+    'messenger',
 
     # django apps
     'django.contrib.admin',
@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-AUTH_USER_MODEL = 'messanger.Account'
+AUTH_USER_MODEL = 'messenger.Account'
 
 LOGIN_URL = '/login'
 

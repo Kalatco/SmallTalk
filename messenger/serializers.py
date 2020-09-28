@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from messanger.models import Group, Chat, Message, Account
+from messenger.models import Group, Chat, Message, Account
 
 # --- ACCOUNT SERIALIZERS --- #
 

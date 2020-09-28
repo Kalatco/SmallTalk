@@ -1,5 +1,5 @@
 from django.urls import path
-from messanger.views import api_detail_group, api_detail_chat, api_detail_message
+from messenger.views import api_detail_group, api_detail_chat, api_detail_message
 
 app_name = 'message'
 

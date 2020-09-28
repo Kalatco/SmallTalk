@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-from messanger.models import Group, Chat, Message, Account
-from messanger.serializers import (
+from messenger.models import Group, Chat, Message, Account
+from messenger.serializers import (
     GroupSerializer,
     ChatSerializer,
     MessageSerializer,

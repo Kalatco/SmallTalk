@@ -34,6 +34,6 @@ Django, node, expo-cli must be installed globally
 | ------ | ------  |
 | `POST` login | /login |
 | `POST` register | /register |
-| `AUTH` `GET` groups | /messanger/groups |
-| `AUTH` `GET` chats | /messanger/chats/<int: group_id> |
-| `AUTH` `GET` messanges | /messanger/messages/<int: chat_id> |
+| `AUTH` `GET` groups | /messenger/groups |
+| `AUTH` `GET` chats | /messenger/chats/<int: group_id> |
+| `AUTH` `GET` messanges | /messenger/messages/<int: chat_id> |
