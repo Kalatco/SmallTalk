@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 
-from account.views import (
-    registration_view,
-)
+from messanger.views import registration_view
 
 urlpatterns = [
     path('messanger/', include('messanger.urls', 'messanger_api')),

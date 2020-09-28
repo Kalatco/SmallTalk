@@ -2,9 +2,18 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 
-from messanger.models import Group, Chat, Message
-from messanger.serializers import GroupSerializer, ChatSerializer, MessageSerializer
+from messanger.models import Group, Chat, Message, Account
+from messanger.serializers import (
+    GroupSerializer,
+    ChatSerializer,
+    MessageSerializer,
+    RegistrationSerializer
+)
+
+
+# ---- MESSAGING ROUTES --- #
 
 @api_view(['GET',])
 @permission_classes((IsAuthenticated,))
@@ -54,3 +63,23 @@ def api_detail_message(request, chat_id):
         serializer = MessageSerializer(message)
         return_list.append(serializer.data)
     return Response(return_list)
+
+
+# --- ACCOUNT ROUTES --- #
+
+
+@api_view(['POST'])
+@permission_classes([])
+def registration_view(request):
+    serializer = RegistrationSerializer(data=request.data)
+    data = {}
+    if serializer.is_valid():
+        account = serializer.save()
+        data['response'] = "new account created"
+        data['email'] = account.email
+        data['username'] = account.username
+        token = Token.objects.get(user=account).key
+        data['token'] = token
+    else:
+        data = serializer.errors
+    return Response(data)

@@ -34,7 +34,6 @@ INSTALLED_APPS = [
 
     # My apps
     'messanger',
-    'account',
 
     # django apps
     'django.contrib.admin',
@@ -84,7 +83,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-AUTH_USER_MODEL = 'account.Account'
+AUTH_USER_MODEL = 'messanger.Account'
 
 LOGIN_URL = '/login'
 

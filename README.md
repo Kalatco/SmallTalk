@@ -28,7 +28,7 @@ Django, node, expo-cli must be installed globally
 
 ## Server Routes
 
-`AUTH` requires an URL header of "Authorization: Token <user token>"
+`AUTH` requires an URL header of "Authorization: Token < token goes here >"
 
 | Function | Route |
 | ------ | ------  |
