@@ -15,7 +15,7 @@ import {
   Details,
   Search2,
   Profile,
-  Spalsh,
+  Splash,
 } from "./views/LoginView";
 import { AuthContext } from "./views/Context";
 
