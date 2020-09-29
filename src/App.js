@@ -1,21 +1,141 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import MessageView from "./views/MessageView";
-import LoginScreen from "./views/LoginView";
+// import MessageView from "./views/MessageView";
 
-const Stack = createStackNavigator();
+import { AuthContext } from "./views/Context";
+import {
+  SignIn,
+  CreateAccount,
+  Search,
+  Home,
+  Details,
+  Search2,
+  Profile,
+  Spalsh,
+} from "./views/LoginView";
+import { AuthContext } from "./views/Context";
 
-function App() {
+const AuthStack = createStackNavigator();
+const AuthStackScreen = () => (
+  <AuthStack.Navigator>
+    <AuthStack.Screen
+      name="SignIn"
+      component={SignIn}
+      options={{ title: "Sign In" }}
+    />
+    <AuthStack.Screen
+      name="CreateAccount"
+      component={CreateAccount}
+      options={{ title: "Create Account" }}
+    />
+  </AuthStack.Navigator>
+);
+const Tabs = createBottomTabNavigator();
+const HomeStack = createStackNavigator();
+const SearchStack = createStackNavigator();
+
+const HomeStackScreen = () => (
+  <HomeStack.Navigator>
+    <HomeStack.Screen name="Home" component={Home} />
+    <HomeStack.Screen
+      name="Details"
+      component={Details}
+      options={({ route }) => ({
+        title: route.params.name, // TODO: Get rid of this comma
+      })}
+    />
+  </HomeStack.Navigator>
+);
+
+const SearchStackScreen = () => (
+  <SearchStack.Navigator>
+    <SearchStack.Screen name="Search" component={Search} />
+    <SearchStack.Screen name="Search2" component={Search2} />
+  </SearchStack.Navigator>
+);
+
+const ProfileStack = createStackNavigator();
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Profile" component={Profile} />
+  </ProfileStack.Navigator>
+);
+
+const TabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={HomeStackScreen} />
+    <Tabs.Screen name="Search" component={SearchStackScreen} />
+  </Tabs.Navigator>
+);
+
+const Drawer = createDrawerNavigator();
+const DrawerScreen = () => (
+  <Drawer.Navigator>
+    <Drawer.Screen name="Home" component={TabsScreen} />
+    <Drawer.Screen name="Profile" component={ProfileStackScreen} />
+  </Drawer.Navigator>
+);
+
+const RootStack = createStackNavigator();
+const RootStackScreen = ({ userToken }) => (
+  <RootStack.Navigator headerMode="none">
+    {userToken ? (
+      <RootStack.Screen
+        name="App"
+        component={DrawerScreen}
+        options={{
+          animationEnabled: false, // TODO: remove comma
+        }}
+      />
+    ) : (
+      <RootStack.Screen
+        name="Auth"
+        component={AuthStackScreen}
+        options={{
+          animationEnabled: false, // TDOD: remove comma
+        }}
+      />
+    )}
+  </RootStack.Navigator>
+);
+
+export default () => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [userToken, setUserToken] = React.useState(null);
+
+  const authContext = React.useMemo(() => {
+    return {
+      signIn: () => {
+        setIsLoading(false);
+        setUserToken("smalltalk");
+      },
+      signUp: () => {
+        setIsLoading(false);
+        setUserToken(null);
+      },
+      signOut: () => {},
+    };
+  }, []);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  if (isLoading) {
+    return <Splash />;
+  }
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={MessageView} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+        <RootStackScreen userToken={userToken} />
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
-}
-
-export default App;
+};
