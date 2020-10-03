@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
 
-const Message = props => {
+const Message = (props) => {
   return (
     <View style={styles.messageStyle}>
       <Text>{props.content}</Text>
@@ -13,10 +13,10 @@ const styles = StyleSheet.create({
   messageStyle: {
     padding: 10,
     marginVertical: 2,
-    backgroundColor: '#ccc',
-    borderColor: 'black',
+    backgroundColor: "#ccc",
+    borderColor: "black",
     borderWidth: 1,
-  }
-})
+  },
+});
 
 export default Message;
