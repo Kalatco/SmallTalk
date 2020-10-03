@@ -17,7 +17,6 @@ import {
   Profile,
   Splash,
 } from "./views/LoginView";
-import { AuthContext } from "./views/Context";
 
 const AuthStack = createStackNavigator();
 const AuthStackScreen = () => (
@@ -45,7 +44,7 @@ const HomeStackScreen = () => (
       name="Details"
       component={Details}
       options={({ route }) => ({
-        title: route.params.name, // TODO: Get rid of this comma
+        title: route.params.name,
       })}
     />
   </HomeStack.Navigator>
@@ -88,7 +87,7 @@ const RootStackScreen = ({ userToken }) => (
         name="App"
         component={DrawerScreen}
         options={{
-          animationEnabled: false, // TODO: remove comma
+          animationEnabled: false,
         }}
       />
     ) : (
@@ -96,7 +95,7 @@ const RootStackScreen = ({ userToken }) => (
         name="Auth"
         component={AuthStackScreen}
         options={{
-          animationEnabled: false, // TDOD: remove comma
+          animationEnabled: false,
         }}
       />
     )}
