@@ -1,11 +1,8 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
+import { connect } from "react-redux";
 
-
-const FAKE_USERNAME = 'admin';
-const FAKE_PASSWORD = 'password';
-
-export default function SigninView() {
+function SigninView(props) {
 
   const login = () => {
     console.log('logging in!');
@@ -22,6 +19,23 @@ export default function SigninView() {
     </View>
   );
 };
+
+// Getters: props.user.password OR props.user.username
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+}
+
+// Setters: props.setSignedIn(true);
+function mapDispatchToProps(dispatch) {
+  return {
+    testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
+    setSignedIn: (isSignedIn) => dispatch({ type: "SET_SIGNED_IN", value: isSignedIn}),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SigninView);
 
 const styles = StyleSheet.create({
   container: {

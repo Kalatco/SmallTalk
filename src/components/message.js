@@ -9,6 +9,8 @@ const Message = (props) => {
   );
 };
 
+export default Message;
+
 const styles = StyleSheet.create({
   messageStyle: {
     fontSize: 18,
@@ -23,5 +25,3 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
 });
-
-export default Message;

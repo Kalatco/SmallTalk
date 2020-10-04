@@ -2,13 +2,42 @@ import React from "react";
 import { StyleSheet, TextInput, View, Button, Text } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { TestGroups } from "../components/GroupItem";
+import SettingsGroupItem from "./../components/SettingsGroupItem";
+import { connect } from "react-redux";
 
-const renderGroup = ({ item }) => {
-  return <Text style={settingsStyles.groupTextStyle}>{item.name}</Text>;
-};
+const TestGroups = [
+  {
+    id: "1",
+    name: "group 1",
+  },
+  {
+    id: "2",
+    name: "group 2",
+  },
+  {
+    id: "3",
+    name: "group 3",
+  },
+  {
+    id: "4",
+    name: "group 4",
+  },
+  {
+    id: "5",
+    name: "group 5",
+  },
+  {
+    id: "6",
+    name: "group 6",
+  },
+  {
+    id: "7",
+    name: "group 7",
+  },
+];
 
-export default function SettingsView(props) {
+
+function SettingsView(props) {
   return (
     <KeyboardAwareScrollView style={settingsStyles.container}>
       <View style={settingsStyles.inputContainers}>
@@ -37,7 +66,7 @@ export default function SettingsView(props) {
         <FlatList
           style={settingsStyles.flatListStyle}
           data={TestGroups}
-          renderItem={renderGroup}
+          renderItem={(itemData) => <SettingsGroupItem content={itemData} /> }
         />
         <Text style={settingsStyles.textStyle}>New Group:</Text>
         <TextInput
@@ -74,6 +103,27 @@ export default function SettingsView(props) {
     </KeyboardAwareScrollView>
   );
 }
+
+// Getters: props.user
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+}
+
+// Setters: props.setUsername("username");
+function mapDispatchToProps(dispatch) {
+  return {
+    testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
+    setUsername: (username) => dispatch({ type: "SET_USERNAME", value: username }),
+    setFirstname: (name) => dispatch({ type: "SET_FIRSTNAME", value: name }),
+    setLastname: (name) => dispatch({ type: "SET_LASTNAME", value: name }),
+    setPassword: (password) => dispatch({ type: "SET_PASSWORD", value: password }),
+    addGroup: (groupName) => dispatch({ type: "ADD_GROUP", value: groupName }),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsView);
 
 const settingsStyles = StyleSheet.create({
   container: {

@@ -5,11 +5,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Provider } from "react-redux";
 import { store } from "./store/index";
+import { connect } from "react-redux";
 
 import SigninView from "./views/LoginView";
 import SettingsView from "./views/SettingsView";
 import MessageView from "./views/MessageView";
-import ChatSelection from "./views/ChatSelection";
+import ChatSelectionView from "./views/ChatSelectionView";
 
 /*
   Stacks - each one contains a pointer to a view
@@ -69,7 +70,9 @@ const MessageStackScreen = () => (
 // Sidemenu contains the message screen stack component
 const SideMenuStack = createDrawerNavigator();
 const SideMenuScreen = () => (
-  <SideMenuStack.Navigator drawerContent={ChatSelection}>
+  <SideMenuStack.Navigator
+    drawerContent={props => <ChatSelectionView {...props} />}
+  >
     <SideMenuStack.Screen
       name="MessageAndSettings"
       component={MessageStackScreen}
@@ -81,13 +84,10 @@ const SideMenuScreen = () => (
   Parent Stack - entry point to either login or message view
 */
 
-// toggle to either see login page or see messages page
-const RENDER_LOGIN_PAGE = true;
-
 const RootStack = createStackNavigator();
-const RootStackScreen = () => (
+const RootStackScreen = (props) => (
   <RootStack.Navigator headerMode="none">
-    {RENDER_LOGIN_PAGE ? (
+    {props.isSignedIn ? (
       <RootStack.Screen
         name="Home"
         component={SideMenuScreen}
@@ -107,6 +107,15 @@ const RootStackScreen = () => (
   </RootStack.Navigator>
 );
 
+// Getters: props.user.password OR props.user.username
+function mapStateToProps(state) {
+  return {
+    isSignedIn: state.isSignedIn,
+  };
+}
+
+const ReduxConnectedRootStack = connect(mapStateToProps)(RootStackScreen);
+
 /*
   Default - renders all the stacks
 */
@@ -115,7 +124,7 @@ export default () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <RootStackScreen />
+        <ReduxConnectedRootStack />
       </NavigationContainer>
     </Provider>
   );
