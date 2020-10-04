@@ -3,13 +3,13 @@ import { Button, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { Provider } from 'react-redux';
-import { store } from './store/index';
+import { Provider } from "react-redux";
+import { store } from "./store/index";
 
-import SigninView from './views/LoginView';
-import SettingsView from './views/SettingsView';
-import MessageView from './views/MessageView';
-import ChatSelection from './views/ChatSelection';
+import SigninView from "./views/LoginView";
+import SettingsView from "./views/SettingsView";
+import MessageView from "./views/MessageView";
+import ChatSelection from "./views/ChatSelection";
 
 /*
   Stacks - each one contains a pointer to a view
@@ -35,28 +35,27 @@ const MessageStackScreen = () => (
       component={MessageView}
       options={({ navigation }) => ({
         headerTitle: () => (
-          <Text style={{
-            textAlign: 'center',
-            alignSelf:'center',
-            fontSize: 24,
-          }}>
+          <Text
+            style={{
+              textAlign: "center",
+              alignSelf: "center",
+              fontSize: 24,
+            }}
+          >
             Messages
           </Text>
         ),
         headerLeft: () => (
-          <Button
-            title="Side menu"
-            onPress={() => navigation.toggleDrawer()}
-          />
+          <Button title="Side menu" onPress={() => navigation.toggleDrawer()} />
         ),
         headerRight: () => (
           <Button
             title="Settings"
-            onPress={() => navigation.push("Settings", { name: "Settings" }) }
+            onPress={() => navigation.push("Settings", { name: "Settings" })}
           />
         ),
       })}
-      />
+    />
     <MessageStack.Screen
       name="Settings"
       component={SettingsView}
@@ -71,7 +70,10 @@ const MessageStackScreen = () => (
 const SideMenuStack = createDrawerNavigator();
 const SideMenuScreen = () => (
   <SideMenuStack.Navigator drawerContent={ChatSelection}>
-    <SideMenuStack.Screen name="MessageAndSettings" component={MessageStackScreen} />
+    <SideMenuStack.Screen
+      name="MessageAndSettings"
+      component={MessageStackScreen}
+    />
   </SideMenuStack.Navigator>
 );
 
