@@ -46,36 +46,22 @@ const FAKE_API_CALL = {
         {
           messageId: 4,
           message: "first message! of the second chat",
-          authorId: 1,
+          author: "firstUser",
           created: "2020-09-27 00:02:31",
         },
         {
           messageId: 5,
           message: "second message!",
-          authorId: 2,
+          author: "seconduser",
           created: "2020-09-27 00:02:31",
         },
         {
           messageId: 6,
           message: "first message!",
-          authorId: 2,
+          author: "thirdUser",
           created: "2020-09-27 00:02:31",
         },
       ],
-    },
-  ],
-  users_api_call: [
-    {
-      userId: 1,
-      username: "firstUser",
-    },
-    {
-      userId: 2,
-      username: "secondUser",
-    },
-    {
-      userId: 3,
-      username: "thirdUser",
     },
   ],
 };
@@ -128,16 +114,18 @@ function MessageView(props) {
   );
 }
 
-// Imported Values
+// Getters: props.messageList
 function mapStateToProps(state) {
   return {
+    selectedChat: state.selectedGroup.chatId,
     messageList: state.messageList,
   };
 }
 
-// Dispatch Actions
+// Setters: props.newMessage("new message");
 function mapDispatchToProps(dispatch) {
   return {
+    testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
     newMessage: (msg) => dispatch({ type: "NEW_MESSAGE", value: msg }),
   };
 }
