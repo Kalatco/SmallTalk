@@ -48,6 +48,7 @@ function SigninView(props) {
           value={passwordText}
           style={styles.textBox}
           underlineColorAndroid="transparent"
+          secureTextEntry={true}
         />
 
         <Button style={styles.button} title="Sign In" onPress={login} />
