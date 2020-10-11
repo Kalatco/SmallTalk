@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, View, Button, Text} from "react-native";
+import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import SettingsGroupItem from "./../components/SettingsGroupItem";
 import { connect } from "react-redux";
 
 const TestGroups = [
@@ -125,6 +124,10 @@ function SettingsView(props) {
     console.log("New group: " + newGroupText);
   };
 
+  const removeGroup = () => {
+    console.log("Remove Group Button Pressed!");
+  };
+
   return (
     <KeyboardAwareScrollView style={settingsStyles.container}>
       {/*START OF USERNAME VIEW*/}
@@ -177,10 +180,10 @@ function SettingsView(props) {
       </View>
       {/*START OF OLD PASSWORD VIEW*/}
       <View style={settingsStyles.inputContainers}>
-        <Text style={settingsStyles.textStyle}>Old Password:</Text>
+        <Text style={settingsStyles.textStyle}>Current Password:</Text>
         <Text style={settingsStyles.textStyle}>(REQUIRED for Name/Password Changes)</Text>
         <TextInput style={settingsStyles.textInputStyle} 
-          placeholder="Enter Old Password"
+          placeholder="Enter Current Password"
           onChangeText={handleCurrentPasswordInput}
           value={currentPasswordText}
           secureTextEntry={true}
@@ -189,11 +192,21 @@ function SettingsView(props) {
       {/*START OF GROUPS VIEW*/}
       <View style={settingsStyles.inputContainers}>
         <Text style={settingsStyles.textStyle}>Current Groups:</Text>
-        <FlatList
+        {/*<FlatList
           style={settingsStyles.flatListStyle}
           data={TestGroups}
           renderItem={(itemData) => <SettingsGroupItem content={itemData} />}
-        />
+        />*/}
+        {props.user.groups.map((group, idx) => (
+          <View style={settingsStyles.groupContainer}
+            key={idx}>
+            <Text style={settingsStyles.groupTextStyle}>{group.name}</Text>
+            <TouchableOpacity style={settingsStyles.removeGroupOpacity}
+              onPress={removeGroup}
+            ><Text style={settingsStyles.removeGroupText}>Remove Group</Text></TouchableOpacity>
+
+          </View>
+        ))}
         <Text style={settingsStyles.textStyle}>New Group:</Text>
         <TextInput
           style={settingsStyles.textInputStyle}
@@ -267,13 +280,30 @@ const settingsStyles = StyleSheet.create({
     alignItems: "center",
     padding: 5,
   },
+  groupContainer: {
+    flexDirection: 'row'
+  },
+  removeGroupOpacity: {
+    backgroundColor: 'gray',
+    width: 120,
+    borderWidth: 1,
+    borderColor: "white"
+  },
+  removeGroupText: {
+    color: "white",
+    textAlign: "center"
+  },
   textStyle: {
     color: "black",
     fontWeight: "bold",
   },
   groupTextStyle: {
+    backgroundColor: "gainsboro",
     color: "black",
-    fontWeight: "bold",
+    borderColor: "black",
+    width: 150,
+    borderWidth: 1,
+    textAlign: "center"
   },
   textInputStyle: {
     height: 30,
