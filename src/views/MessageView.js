@@ -81,14 +81,11 @@ function MessageView(props) {
     setEnteredText("");
   };
 
-  useEffect(() => {
-    
-  })
 
   return (
     <KeyboardAwareScrollView 
-    resetScrollToCoords={{x: 0, y: 0}}
-    contentContainerStyle={styles.screen}
+      resetScrollToCoords={{x: 0, y: 0}}
+      contentContainerStyle={styles.screen}
     >
       <View style={styles.messageContainer}>
         <FlatList
@@ -97,8 +94,8 @@ function MessageView(props) {
             messageRef.scrollToEnd({ animated: true });
           }}
           keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
-          data={props.messageList}
-          renderItem={(itemData) => <Message content={itemData.item.value} />}
+          data={(props.messageList)}
+          renderItem={(itemData) => <Message content={itemData.item} />}
         />
       </View>
       <View style={styles.inputContainer}>
