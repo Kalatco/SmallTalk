@@ -149,7 +149,7 @@ const reducer = (state=initialState, action) => {
           ...state,
           messageList: [
             ...state.messageList,
-            { id: state.index++, message: action.value, author: 'notme', created: '12:00' }
+            { id: state.index++, value: action.value }
           ], 
         };
       }
