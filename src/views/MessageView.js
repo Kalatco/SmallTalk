@@ -1,8 +1,7 @@
-import React, { useState, Component, useEffect } from "react";
+import React, { useState, Component } from "react";
 import { FlatList, StyleSheet, TextInput, View, Button } from "react-native";
 import Message from "./../components/message";
 import { connect } from "react-redux";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 /**
  * Fake API Call
@@ -81,12 +80,8 @@ function MessageView(props) {
     setEnteredText("");
   };
 
-
   return (
-    <KeyboardAwareScrollView 
-      resetScrollToCoords={{x: 0, y: 0}}
-      contentContainerStyle={styles.screen}
-    >
+    <View style={styles.screen}>
       <View style={styles.messageContainer}>
         <FlatList
           ref={(ref) => setmessageRef(ref)}
@@ -94,8 +89,8 @@ function MessageView(props) {
             messageRef.scrollToEnd({ animated: true });
           }}
           keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
-          data={(props.messageList)}
-          renderItem={(itemData) => <Message content={itemData.item} />}
+          data={props.messageList}
+          renderItem={(itemData) => <Message content={itemData.item.value} />}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -115,7 +110,7 @@ function MessageView(props) {
           />
         </View>
       </View>
-    </KeyboardAwareScrollView>
+    </View>
   );
 }
 
@@ -140,19 +135,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(MessageView);
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: "center",
+    justifyContent: "space-between",
+    padding: 50,
   },
   messageContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems:'flex-end',
-    justifyContent:'flex-end',
-    
   },
   inputContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
+    paddingHorizontal: 5,
+    paddingVertical: 3,
   },
   input: {
     borderRadius: 5,
