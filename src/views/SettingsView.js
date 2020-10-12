@@ -1,39 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity} from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
-
-const TestGroups = [
-  {
-    id: "1",
-    name: "group 1",
-  },
-  {
-    id: "2",
-    name: "group 2",
-  },
-  {
-    id: "3",
-    name: "group 3",
-  },
-  {
-    id: "4",
-    name: "group 4",
-  },
-  {
-    id: "5",
-    name: "group 5",
-  },
-  {
-    id: "6",
-    name: "group 6",
-  },
-  {
-    id: "7",
-    name: "group 7",
-  },
-];
 
 function SettingsView(props) {
 
@@ -118,10 +86,12 @@ function SettingsView(props) {
   };
 
   const addNewGroup = () => {
-    console.log("Adding New Group!");
+    if(newGroupText.length > 0) {
+      console.log("Adding New Group!");
 
-    props.addGroup(newGroupText);
-    console.log("New group: " + newGroupText);
+      props.addGroup(newGroupText);
+      console.log("New group: " + newGroupText);
+    }
   };
 
   const removeGroup = () => {
@@ -192,11 +162,6 @@ function SettingsView(props) {
       {/*START OF GROUPS VIEW*/}
       <View style={settingsStyles.inputContainers}>
         <Text style={settingsStyles.textStyle}>Current Groups:</Text>
-        {/*<FlatList
-          style={settingsStyles.flatListStyle}
-          data={TestGroups}
-          renderItem={(itemData) => <SettingsGroupItem content={itemData} />}
-        />*/}
         {props.user.groups.map((group, idx) => (
           <View style={settingsStyles.groupContainer}
             key={idx}>
@@ -204,7 +169,6 @@ function SettingsView(props) {
             <TouchableOpacity style={settingsStyles.removeGroupOpacity}
               onPress={removeGroup}
             ><Text style={settingsStyles.removeGroupText}>Remove Group</Text></TouchableOpacity>
-
           </View>
         ))}
         <Text style={settingsStyles.textStyle}>New Group:</Text>
