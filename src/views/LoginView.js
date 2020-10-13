@@ -23,13 +23,13 @@ function SigninView(props) {
     setPasswordText(enteredText);
   };
 
+  const [isValidLogin, setisValidLogin] = useState(false);
+
   const login = () => {
-    // console.log("logging in!");
-    // console.log(props.user.password);
-    console.log(emailText === props.user.email);
+    
     props.setSignedIn(
-      emailText === props.user.email && passwordText === props.user.password
-    );
+      emailText === props.user.email && passwordText === props.user.password);
+    setisValidLogin(true);
   };
 
   return (
@@ -52,6 +52,13 @@ function SigninView(props) {
         />
 
         <Button style={styles.button} title="Sign In" onPress={login} />
+        {isValidLogin && (
+          <View>
+            <Text style={styles.invalidCredentials}>
+              User email or password is incorrect
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -121,5 +128,10 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     height: "100%",
     width: "100%",
+  }, 
+  invalidCredentials: {
+    color: "red",
+    textAlign: "center",
+    marginTop: 5,
   },
 });
