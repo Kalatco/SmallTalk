@@ -81,12 +81,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class Group(models.Model):
     admin = models.ForeignKey(Account, on_delete=models.CASCADE)
-    participants = models.ManyToManyField(Account, related_name='chats')
+    users = models.ManyToManyField(Account, related_name='group_list')
     name = models.TextField(max_length=25)
     created = models.DateTimeField(auto_now_add=True)
 
 class Chat(models.Model):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='chat_list')
     name = models.TextField(max_length=25)
     created = models.DateTimeField(auto_now_add=True)
 

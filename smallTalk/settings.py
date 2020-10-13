@@ -25,7 +25,7 @@ SECRET_KEY = 'o(!2q6v@(-7vl+7y%f#@dg!s9939wsu(8boalazv-4z=b66y^l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', '192.168.0.107']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -89,6 +90,19 @@ LOGIN_URL = '/login'
 
 WSGI_APPLICATION = 'smallTalk.wsgi.application'
 
+ASGI_APPLICATION = 'smallTalk.routing.application'
+
+CHANNEL_LAYERS = {
+    #'default': {
+    #    'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    #    'CONFIG': {
+    #        "hosts": [('localhost', 6379)],
+    #    },
+    #},
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

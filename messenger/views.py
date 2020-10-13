@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 
 from messenger.models import Group, Chat, Message, Account
 from messenger.serializers import (
+    AccountSerializer,
     GroupSerializer,
     ChatSerializer,
     MessageSerializer,
@@ -17,7 +18,14 @@ from messenger.serializers import (
 
 @api_view(['GET',])
 @permission_classes((IsAuthenticated,))
-def api_detail_group(request):
+def api_detail_profile(request):
+    account = Account.objects.filter(email=request.user).first()
+    serializer = AccountSerializer(account)
+    return Response(serializer.data)
+
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def api_all_groups(request):
     try:
         groups = Group.objects.all()
     except Group.DoesNotExist:
@@ -41,7 +49,7 @@ def api_detail_chat(request, group_id):
     
     # Verify user has access to this content
     user = request.user
-    if not group.participants.all().filter(email=user):
+    if not group.users.all().filter(email=user):
         return Response({'response': 'Invalid access permissions for this content'})
 
     return_list = []

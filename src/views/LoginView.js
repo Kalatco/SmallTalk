@@ -4,13 +4,11 @@ import {
   Text,
   Button,
   StyleSheet,
-  Image,
-  TouchableOpacity,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { color } from "react-native-reanimated";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 import { connect } from "react-redux";
+import axios from 'axios';
 
 function SigninView(props) {
   const [emailText, setEmailText] = useState("");
@@ -23,14 +21,54 @@ function SigninView(props) {
     setPasswordText(enteredText);
   };
 
-  const [isValidLogin, setisValidLogin] = useState(false);
+  const [isInvalidLogin, setisInvalidLogin] = useState(false);
 
   const login = () => {
-    
-    props.setSignedIn(
-      emailText === props.user.email && passwordText === props.user.password);
-    setisValidLogin(true);
-  };
+
+    let formData = new FormData();
+    // (Django won't let me rename 'username' to 'email')
+    formData.append('username', emailText);
+    formData.append('password', passwordText);
+
+    // Create request for user auth token
+    axios.post(`${props.serverName}/login`, formData)
+      .then(res => {
+
+        // Set the user token in store
+        props.setAuthToken(res.data.token);
+
+        // Once the auth token is recieved, access user data
+        if (res.data.token) {
+          const authKey = res.data.token;
+          axios.get(`${props.serverName}/messenger/user`, {
+            headers: {
+              'Authorization': `Token ${authKey}`
+            }
+          })
+            .then(res => {
+              // Save user data in store
+              props.setUserState(res.data);
+
+              axios.get(`${props.serverName}/messenger/messages/${props.selectedChatId}`, {
+                headers: {
+                  'Authorization': `Token ${authKey}`
+                }
+              })
+                .then((res) => {
+                  props.setMessages(res.data)
+                })
+                .catch((res) => console.log(res));
+              // Signin to program
+              props.setSignedIn(true);
+            })
+            .catch((res) => console.log(res));
+        }
+      })
+      .catch((res) => {
+        console.log(res);
+        setisInvalidLogin(true);
+      });
+  }
 
   return (
     <View style={styles.container}>
@@ -52,7 +90,7 @@ function SigninView(props) {
         />
 
         <Button style={styles.button} title="Sign In" onPress={login} />
-        {isValidLogin && (
+        {isInvalidLogin && (
           <View>
             <Text style={styles.invalidCredentials}>
               User email or password is incorrect
@@ -68,6 +106,9 @@ function SigninView(props) {
 function mapStateToProps(state) {
   return {
     user: state.user,
+    serverName: state.serverName,
+    authenticationKey: state.authenticationKey,
+    selectedChatId: state.selectedChatId,
   };
 }
 
@@ -75,8 +116,10 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
-    setSignedIn: (isSignedIn) =>
-      dispatch({ type: "SET_SIGNED_IN", value: isSignedIn }),
+    setSignedIn: (isSignedIn) => dispatch({ type: "SET_SIGNED_IN", value: isSignedIn}),
+    setAuthToken: (token) => dispatch({ type: 'SET_AUTH_TOKEN', value: token }),
+    setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data }),
+    setMessages: (list) => dispatch({ type: 'SET_MESSAGES', value: list }),
   };
 }
 
