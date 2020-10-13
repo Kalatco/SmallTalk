@@ -162,7 +162,7 @@ function SettingsView(props) {
       {/*START OF GROUPS VIEW*/}
       <View style={settingsStyles.inputContainers}>
         <Text style={settingsStyles.textStyle}>Current Groups:</Text>
-        {props.user.groups.map((group, idx) => (
+        {props.user.group_list.map((group, idx) => (
           <View style={settingsStyles.groupContainer}
             key={idx}>
             <Text style={settingsStyles.groupTextStyle}>{group.name}</Text>

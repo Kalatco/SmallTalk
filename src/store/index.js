@@ -1,5 +1,8 @@
 import { createStore } from "redux";
 
+// IPv4 server address goes here
+const SERVER_ADDRESS = '192.168.0.107';
+
 // State variables
 const initialState = {
   // Temporary state variables, needs to be refactored
@@ -7,18 +10,17 @@ const initialState = {
   messageList: [],
 
   // State Variables for accessing content
-  authenticationKey: "asdfabporijioajvdf94325-u2h8guo54p",
+  authenticationKey: "",
   isSignedIn: false,
+  serverName: `http://${SERVER_ADDRESS}:8000`,
+  websocketServerName: `ws://${SERVER_ADDRESS}:8000/ws`,
 
   // Selected chat
-  selectedGroup: {
-    groupId: 1,
-    chatId: 2,
-  },
+  selectedChatId: 2,
 
   // Current user
   user: {
-    userId: 1,
+    id: 1,
     first_name: "name",
     last_name: "lastName",
     username: "firstUser",
@@ -28,34 +30,37 @@ const initialState = {
     password: "Password1",
 
     // Groups the user belongs to.
-    groups: [
+    group_list: [
       {
         name: "Group name 1",
-        groupId: 1,
+        id: 1,
 
         // All chats the group contains
-        chats: [
+        chat_list: [
           {
-            chat: "Chat one",
-            chatId: 1,
+            name: "Chat one",
+            id: 1,
           },
           {
-            chat: "Chat two",
-            chatId: 2,
+            name: "Chat two",
+            id: 2,
           },
         ],
+        users: [
+          { "username": "firstUser"}
+        ]
       },
       {
         name: "Group name 2",
-        groupId: 2,
-        chats: [
+        id: 2,
+        chat_list: [
           {
-            chat: "Chat one",
-            chatId: 3,
+            name: "Chat one",
+            id: 3,
           },
           {
-            chat: "Chat two",
-            chatId: 4,
+            name: "Chat two",
+            id: 4,
           },
         ],
       },
@@ -74,6 +79,7 @@ const reducer = (state = initialState, action) => {
           isSignedIn: action.value,
         };
       }
+      break;
 
     // Settings
     case "SET_USERNAME":
@@ -86,8 +92,9 @@ const reducer = (state = initialState, action) => {
           },
         };
       }
-    case "SET_FIRSTNAME":
-      if (action.value) {
+      break;
+    case 'SET_FIRSTNAME':
+      if(action.value) {
         return {
           ...state,
           user: {
@@ -96,8 +103,9 @@ const reducer = (state = initialState, action) => {
           },
         };
       }
-    case "SET_LASTNAME":
-      if (action.value) {
+      break;
+    case 'SET_LASTNAME':
+      if(action.value) {
         return {
           ...state,
           user: {
@@ -106,8 +114,9 @@ const reducer = (state = initialState, action) => {
           },
         };
       }
-    case "SET_PASSWORD":
-      if (action.value) {
+      break;
+    case 'SET_PASSWORD':
+      if(action.value) {
         return {
           ...state,
           user: {
@@ -116,14 +125,15 @@ const reducer = (state = initialState, action) => {
           },
         };
       }
-    case "ADD_GROUP":
-      if (action.value) {
+      break;
+    case 'ADD_GROUP':
+      if(action.value) {
         return {
           ...state,
           user: {
             ...state.user,
-            groups: [
-              ...state.user.groups,
+            group_list: [
+              ...state.user.group_list,
               {
                 name: action.value,
                 groupId: 0,
@@ -133,26 +143,60 @@ const reducer = (state = initialState, action) => {
           },
         };
       }
+      break;
 
     // TESTING
-    case "PING":
-      console.log("Pong!");
+    case 'PING':
+      console.log('Pong!');
+      console.log(state);
       return state;
 
     // Messaging
-    case "NEW_MESSAGE":
-      if (action.value) {
+    case 'SET_MESSAGES':
+      if(action.value) {
+        return {
+          ...state,
+          messageList: action.value,
+        };
+      }
+      break;
+    
+      case 'SET_SELECTED_CHAT':
+        if(action.value) {
+          return {
+            ...state,
+            selectedChatId: action.value,
+          };
+        }
+    case 'NEW_MESSAGE':
+      if(action.value) {
         return {
           ...state,
           messageList: [
             ...state.messageList,
-            { id: state.index++, value: action.value },
-          ],
+            action.value,
+          ]
         };
       }
-    default:
-      return state;
+      break;
+    case 'SET_AUTH_TOKEN':
+      if(action.value) {
+        return {
+          ...state,
+          authenticationKey: action.value,
+        };
+      }
+      break;
+    case 'SET_USER_STATE':
+      if(action.value) {
+        return {
+          ...state,
+          user: action.value,
+        };
+      }
+      break;
   }
+  return state;
 };
 
 const store = createStore(reducer);

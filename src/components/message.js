@@ -2,9 +2,10 @@ import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 
 const Message = (props) => {
+
   return (
     <View style={styles.messageStyle}>
-      <Text>{props.content}</Text>
+      <Text>{props.content.text}</Text>
     </View>
   );
 };
