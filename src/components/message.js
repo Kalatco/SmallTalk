@@ -6,19 +6,19 @@ const Message = (props) => {
   return (
     <View>
       <View style={
-        props.content.author == 'me' ?
+        props.content.sender.username == "testUser1" ?
         styles.selfUserName : styles.otherUserName
       }>
-        <Text>{props.content.author}</Text>
+        <Text>{props.content.sender.username}</Text>
       </View>
       <View style={
-          props.content.author == 'me' ?
+          props.content.sender.username == 'testUser1' ?
           styles.selfMessageStyle : styles.otherMessageStyle
       }>
-        <Text>{props.content.message}</Text>
+        <Text>{props.content.text}</Text>
       </View>
         <View style={
-        props.content.author == 'me' ?
+        props.content.sender.otherUserName == 'testUser1' ?
         styles.selfTimeStamp : styles.otherTimeStamp
         }> 
           <Text>{props.content.created}</Text>
@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: "flex-end",
     color: "white",
-    backgroundColor: "gray",
+    backgroundColor: "#5eaaa8",
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: "#5eaaa8",
     borderRadius: 10,
     overflow: "hidden",
   },
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
     padding: 10,
     alignSelf: "flex-start",
     color: "white",
-    backgroundColor: "dodgerblue",
+    backgroundColor: "#a3d2ca",
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: "#a3d2ca",
     borderRadius: 10,
     overflow: "hidden",
   },

@@ -1,5 +1,5 @@
 import React, { useState, Component } from "react";
-import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
+import { FlatList, StyleSheet, TextInput, View, Button, Alert, Dimensions } from "react-native";
 import Message from "./../components/message";
 import { connect } from 'react-redux';
 
@@ -24,7 +24,7 @@ class MessageView extends React.Component {
       const data = JSON.parse(e.data);
       console.log(data)
       if (this.props.selectedChatId == data.chat.id) {
-        this.props.newMessage(data);
+        //this.props.newMessage(data);
       }
     };
 
@@ -82,6 +82,7 @@ class MessageView extends React.Component {
           <View>
             <Button
               style={styles.sendButton}
+              color="#5eaaa8"
               title="Send"
               onPress={this.handleSendMessage}
             />
@@ -122,27 +123,34 @@ export default connect(mapStateToProps, mapDispatchToProps)(MessageView);
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: "center",
+    //alignItems: 'center',
+    //justifyContent: "center",
+    backgroundColor:'#e8ded2',
   },
   messageContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems:'flex-end',
-    justifyContent:'flex-end',
-    
+    flex: 11,
+    // justifyContent:'center',
+    // alignItems: 'stretch',
   },
   inputContainer: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-around",
+    alignItems: 'center',
+    backgroundColor: '#056676',
+
   },
   input: {
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "grey",
-    flex: 1,
-    fontSize: 16,
-    paddingHorizontal: 10,
+    width: 300,
+    color:'#555555',
+    paddingRight: 10, 
+    paddingLeft: 10,
+    paddingTop: 5,
+    height: 32,
+    borderColor: '#e8ded2',
+    borderWidth:1, 
+    borderRadius: 2,
+    backgroundColor: '#ffffff',
   },
   sendButton: {
     justifyContent: "center",
