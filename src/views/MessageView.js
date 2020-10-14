@@ -1,5 +1,6 @@
-import React, { useState, Component } from "react";
+import React from "react";
 import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
+import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Message from "./../components/message";
 import { connect } from 'react-redux';
 
@@ -43,6 +44,7 @@ class MessageView extends React.Component {
 
   handleSendMessage = () => {
 
+    if(this.state.enteredText === '') return;
     try {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
@@ -67,26 +69,29 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} />}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}/>}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.input}>
+
+        <KeyboardAccessoryView
+          androidAdjustResize
+          alwaysVisible={true}
+        >
+          <View style={styles.textInputView}>
             <TextInput
+              style={styles.input}
               placeholder="Message"
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
             />
-          </View>
-
-          <View>
             <Button
               style={styles.sendButton}
+              color="#5eaaa8"
               title="Send"
               onPress={this.handleSendMessage}
             />
           </View>
-        </View>
+        </KeyboardAccessoryView>
       </View>
     );
   }
@@ -109,7 +114,6 @@ function mapStateToProps(state) {
 // Setters: props.newMessage("new message");
 function mapDispatchToProps(dispatch) {
   return {
-    testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
     newMessage: (msg) => dispatch({ type: "NEW_MESSAGE", value: msg }),
     setAuthToken: (token) => dispatch({ type: 'SET_AUTH_TOKEN', value: token }),
     setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data }),
@@ -122,32 +126,28 @@ export default connect(mapStateToProps, mapDispatchToProps)(MessageView);
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: "space-between",
-    padding: 50,
+    backgroundColor:'#e8ded2',
   },
   messageContainer: {
-    flex: 1,
+    flex: 11,
   },
-  inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 5,
-    paddingVertical: 3,
+  textInputView: {
+    padding: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#056676',
   },
   input: {
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "grey",
-    flex: 1,
+    flexGrow: 1,
+    borderColor: '#CCC',
+    padding: 10,
     fontSize: 16,
-    paddingHorizontal: 10,
+    textAlignVertical: 'top',
+    color:'#555555',
+    backgroundColor: '#ffffff',
   },
   sendButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    paddingLeft: 15,
-    marginHorizontal: 5,
-    paddingRight: 15,
-    borderRadius: 5,
+    flexShrink: 1,
   },
 });

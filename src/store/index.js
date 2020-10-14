@@ -175,7 +175,7 @@ const reducer = (state = initialState, action) => {
           messageList: [
             ...state.messageList,
             action.value,
-          ]
+          ], 
         };
       }
       break;
