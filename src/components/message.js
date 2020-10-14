@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   selfUserName:{
     fontSize: 6,
     alignSelf:'flex-end',
+    paddingRight: 5,
   },
   selfMessageStyle: {
     fontSize: 18,
@@ -53,6 +54,7 @@ const styles = StyleSheet.create({
   otherUserName:{
     fontSize: 11,
     alignSelf:'flex-start',
+    paddingLeft: 5,
   },
   otherMessageStyle: {
     fontSize: 18,
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   otherTimeStamp: {
-    fontSize: 6,
+    fontSize: 11,
     alignSelf: 'flex-start',
   },
 });

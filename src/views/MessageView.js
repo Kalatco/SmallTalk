@@ -1,6 +1,7 @@
 import React from "react";
 import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
+import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
 import { connect } from 'react-redux';
 
@@ -84,10 +85,11 @@ class MessageView extends React.Component {
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
             />
-            <Button
-              style={styles.sendButton}
+            <Icon
               color="#5eaaa8"
-              title="Send"
+              name="send"
+              style={styles.sendButton}
+              size={40}
               onPress={this.handleSendMessage}
             />
           </View>
@@ -148,6 +150,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   sendButton: {
+    minWidth: 45,
     flexShrink: 1,
+    padding: 3,
   },
 });

@@ -5,7 +5,7 @@
     "fields": {
         "password": "pbkdf2_sha256$216000$H97kZd1dgK8p$7GKmsFqAAEMNBUN8Awr/9mjSnoKUTgODj7r72D5uukM=",
         "email": "andrewraftovich@gmail.com",
-        "username": "andrew",
+        "username": "andrewR",
         "date_joined": "2020-09-28T21:35:42.869Z",
         "last_login": "2020-10-06T01:00:49.194Z",
         "is_admin": true,
@@ -22,7 +22,7 @@
     "fields": {
         "password": "pbkdf2_sha256$216000$6x2qwbLGKymc$W726sOhY8fbrKERc6TlU2NMX6MBcyqokyYNdFJrdI34=",
         "email": "testUser1@email.com",
-        "username": "testUser1",
+        "username": "robbie1",
         "date_joined": "2020-10-11T04:18:41.188Z",
         "last_login": "2020-10-11T04:18:58.403Z",
         "is_admin": false,
@@ -39,9 +39,26 @@
     "fields": {
         "password": "pbkdf2_sha256$216000$0g1rNiXaYTX7$bVQSw5qoGG40yEF8dkHb2kTMUgsfGKQrJHhRK4FSRSQ=",
         "email": "testUser2@email.com",
-        "username": "testUser2",
+        "username": "brad",
         "date_joined": "2020-10-11T04:19:11.460Z",
         "last_login": "2020-10-11T04:19:23.474Z",
+        "is_admin": false,
+        "is_active": true,
+        "is_staff": false,
+        "is_superuser": false,
+        "first_name": "test",
+        "last_name": "user"
+    }
+},
+{
+    "model": "messenger.account",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$216000$0g1rNiXaYTX7$bVQSw5qoGG40yEF8dkHb2kTMUgsfGKQrJHhRK4FSRSQ=",
+        "email": "testUser3@email.com",
+        "username": "Kaz",
+        "date_joined": "2020-10-11T04:25:11.460Z",
+        "last_login": "2020-10-11T04:48:23.474Z",
         "is_admin": false,
         "is_active": true,
         "is_staff": false,
@@ -59,7 +76,9 @@
         "created": "2020-09-28T21:36:33.527Z",
         "users": [
             1,
-            2
+            2,
+            3,
+            4
         ]
     }
 },
@@ -105,29 +124,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 1,
-    "fields": {
-        "sender": 1,
-        "chat": 1,
-        "created": "2020-09-28T21:36:59.041Z",
-        "text": "first message!"
-    }
-},
-{
-    "model": "messenger.message",
-    "pk": 2,
-    "fields": {
-        "sender": 1,
-        "chat": 1,
-        "created": "2020-09-28T21:37:06.481Z",
-        "text": "second message!"
-    }
-},
-{
-    "model": "messenger.message",
     "pk": 3,
     "fields": {
-        "sender": 1,
+        "sender": 2,
         "chat": 2,
         "created": "2020-09-28T21:37:16.002Z",
         "text": "first message in second channel!"
@@ -137,7 +136,7 @@
     "model": "messenger.message",
     "pk": 4,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 1,
         "created": "2020-10-06T04:29:11.543Z",
         "text": "how is the weather today?"
@@ -147,6 +146,36 @@
     "model": "messenger.message",
     "pk": 5,
     "fields": {
+        "sender": 2,
+        "chat": 1,
+        "created": "2020-10-06T04:29:16.543Z",
+        "text": "Very sunny 🌞"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 6,
+    "fields": {
+        "sender": 1,
+        "chat": 1,
+        "created": "2020-10-06T04:30:11.553Z",
+        "text": "🏖️ 🌊 🏄"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 7,
+    "fields": {
+        "sender": 4,
+        "chat": 1,
+        "created": "2020-10-06T04:30:13.543Z",
+        "text": "Winter is coming"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 8,
+    "fields": {
         "sender": 1,
         "chat": 3,
         "created": "2020-10-06T04:36:23.561Z",
@@ -155,9 +184,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 6,
+    "pk": 9,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 3,
         "created": "2020-10-06T04:36:35.067Z",
         "text": "this is my new chat!"
@@ -165,9 +194,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 7,
+    "pk": 10,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 3,
         "created": "2020-10-06T04:36:45.974Z",
         "text": "keep on coding"
@@ -175,7 +204,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 8,
+    "pk": 11,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -185,7 +214,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 9,
+    "pk": 12,
     "fields": {
         "sender": 1,
         "chat": 2,
@@ -195,7 +224,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 10,
+    "pk": 13,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -205,9 +234,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 11,
+    "pk": 14,
     "fields": {
-        "sender": 1,
+        "sender": 2,
         "chat": 2,
         "created": "2020-10-11T04:54:12.948Z",
         "text": "hola"
@@ -215,9 +244,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 12,
+    "pk": 15,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 3,
         "created": "2020-10-11T04:54:26.168Z",
         "text": "011010101010"
@@ -225,7 +254,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 13,
+    "pk": 16,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -235,7 +264,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 14,
+    "pk": 17,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -245,7 +274,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 15,
+    "pk": 18,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -255,17 +284,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 16,
-    "fields": {
-        "sender": 1,
-        "chat": 3,
-        "created": "2020-10-11T04:54:54.408Z",
-        "text": "another message"
-    }
-},
-{
-    "model": "messenger.message",
-    "pk": 17,
+    "pk": 19,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -275,9 +294,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 18,
+    "pk": 20,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 3,
         "created": "2020-10-11T04:55:00.737Z",
         "text": "spam"
@@ -285,7 +304,7 @@
 },
 {
     "model": "messenger.message",
-    "pk": 19,
+    "pk": 21,
     "fields": {
         "sender": 1,
         "chat": 3,
@@ -295,9 +314,9 @@
 },
 {
     "model": "messenger.message",
-    "pk": 20,
+    "pk": 22,
     "fields": {
-        "sender": 1,
+        "sender": 3,
         "chat": 2,
         "created": "2020-10-11T05:04:04.238Z",
         "text": "bonjour"
@@ -305,9 +324,49 @@
 },
 {
     "model": "messenger.message",
-    "pk": 21,
+    "pk": 23,
     "fields": {
         "sender": 1,
+        "chat": 2,
+        "created": "2020-10-11T05:06:04.238Z",
+        "text": "Wow this app works great!"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 24,
+    "fields": {
+        "sender": 4,
+        "chat": 2,
+        "created": "2020-10-11T05:06:09.238Z",
+        "text": "Indeed"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 25,
+    "fields": {
+        "sender": 3,
+        "chat": 2,
+        "created": "2020-10-11T05:06:09.238Z",
+        "text": "And you can scroll through the messages!"
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 26,
+    "fields": {
+        "sender": 2,
+        "chat": 2,
+        "created": "2020-10-11T05:06:09.238Z",
+        "text": "React Native is so cool."
+    }
+},
+{
+    "model": "messenger.message",
+    "pk": 27,
+    "fields": {
+        "sender": 3,
         "chat": 3,
         "created": "2020-10-11T18:27:33.684Z",
         "text": "fourth spam"
@@ -315,42 +374,12 @@
 },
 {
     "model": "messenger.message",
-    "pk": 22,
+    "pk": 28,
     "fields": {
         "sender": 1,
         "chat": 3,
-        "created": "2020-10-11T18:48:01.148Z",
-        "text": "Fifth message"
-    }
-},
-{
-    "model": "messenger.message",
-    "pk": 23,
-    "fields": {
-        "sender": 1,
-        "chat": 3,
-        "created": "2020-10-11T18:48:14.803Z",
-        "text": "Test"
-    }
-},
-{
-    "model": "messenger.message",
-    "pk": 24,
-    "fields": {
-        "sender": 1,
-        "chat": 3,
-        "created": "2020-10-11T18:50:18.218Z",
-        "text": "Test2"
-    }
-},
-{
-    "model": "messenger.message",
-    "pk": 25,
-    "fields": {
-        "sender": 1,
-        "chat": 3,
-        "created": "2020-10-11T18:51:24.954Z",
-        "text": "Test3"
+        "created": "2020-10-11T18:27:33.684Z",
+        "text": "JavaScript is cool"
     }
 }
 ]
