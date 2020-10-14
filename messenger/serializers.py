@@ -30,24 +30,21 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
         return account
 
-class AccountSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Account
-        fields = '__all__'
-
 class LessInfoAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
         fields = ['username']
 
+class LessInfoChatSerializer(serializers.ModelSerializer):
 
-# --- MESSAGING SERIALIZERS --- #
-
+    class Meta:
+        model = Chat
+        fields = ['id', 'name']
 
 class GroupSerializer(serializers.ModelSerializer):
-    participants = LessInfoAccountSerializer(read_only=True, many=True)
+    users = LessInfoAccountSerializer(read_only=True, many=True)
+    chat_list = LessInfoChatSerializer(many=True)
 
     class Meta:
         model = Group
@@ -71,11 +68,7 @@ class ChatSerializer(serializers.ModelSerializer):
         model = Chat
         fields = '__all__'
 
-class LessInfoChatSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Chat
-        fields = ['id', 'name']
 
 class MessageSerializer(serializers.ModelSerializer):
     chat = LessInfoChatSerializer(read_only=True)
@@ -84,3 +77,12 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
+
+class AccountSerializer(serializers.ModelSerializer):
+    # list of groups a user belongs to
+    group_list = GroupSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Account
+        fields = '__all__'
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'group_list']

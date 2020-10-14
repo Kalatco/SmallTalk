@@ -1,129 +1,108 @@
-import React, { useState, Component, useEffect } from "react";
-import { FlatList, StyleSheet, TextInput, View, Button } from "react-native";
+import React, { useState, Component } from "react";
+import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
 import Message from "./../components/message";
-import { connect } from "react-redux";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { connect } from 'react-redux';
 
-/**
- * Fake API Call
- *
- * This JavaScript Object (In Json format) represents the data that a server
- * can potentially send to this phone app or anywhere. So in the code below,
- * we have a Chats and a Users API call data, The programmer can access the data
- * inside and display it on the screen, depending on which information they
- * need to show to the user. For example, A user looking at Chat with id #2,
- * would not want to see data made for Chat #1, each message contains a User ID,
- * so the message would need to access the API to see the username of who
- * send the message.
- */
-const FAKE_API_CALL = {
-  chat_messages_api_call: [
-    {
-      chatId: 1,
-      messages: [
-        {
-          messageId: 1,
-          message: "first message!",
-          authorId: 1,
-          created: "2020-09-27 00:02:31",
-        },
-        {
-          messageId: 2,
-          message: "second message!",
-          authorId: 2,
-          created: "2020-09-27 00:02:31",
-        },
-        {
-          messageId: 3,
-          message: "another message!",
-          authorId: 1,
-          created: "2020-09-27 00:02:31",
-        },
-      ],
-    },
-    {
-      chatId: 2,
-      messages: [
-        {
-          messageId: 4,
-          message: "first message! of the second chat",
-          author: "firstUser",
-          created: "2020-09-27 00:02:31",
-        },
-        {
-          messageId: 5,
-          message: "second message!",
-          author: "seconduser",
-          created: "2020-09-27 00:02:31",
-        },
-        {
-          messageId: 6,
-          message: "first message!",
-          author: "thirdUser",
-          created: "2020-09-27 00:02:31",
-        },
-      ],
-    },
-  ],
-};
+//function MessageView(props) {
+class MessageView extends React.Component {
 
-function MessageView(props) {
-  const [enteredText, setEnteredText] = useState("");
-  const [messageRef, setmessageRef] = useState(undefined);
+  constructor(props) {
+    super(props);
 
-  const handleEnteredText = (enteredText) => {
-    setEnteredText(enteredText);
+    this.state = {
+      enteredText: "",
+      messageRef: undefined,
+      websocket: new WebSocket(`${this.props.websocketServerName}/message/${props.user.username}/`),
+    }
+  }
+
+  // Load data from server
+  async componentDidMount() {
+
+    this.state.websocket.onmessage = (e) => {
+      // a message was received
+      const data = JSON.parse(e.data);
+      console.log(data)
+      if (this.props.selectedChatId == data.chat.id) {
+        this.props.newMessage(data);
+      }
+    };
+
+    this.state.websocket.onerror = (e) => {
+      // an error occurred
+      console.log(e.message);
+    };
+
+    this.state.websocket.onclose = (e) => {
+      // connection closed
+      console.log(e.code, e.reason);
+      Alert.alert("Connection closed")
+    };
+  }
+
+
+  handleSendMessage = () => {
+
+    try {
+      this.state.websocket.send(JSON.stringify({
+        'chat': this.props.selectedChatId,
+        'message': this.state.enteredText,
+      }));
+    } catch(error) {
+      console.log(error)
+    }
+    
+    this.state.messageRef.scrollToEnd({ animated: true });
+    this.state.enteredText = "";
   };
 
-  const handleSendMessage = async () => {
-    props.newMessage(enteredText);
-    messageRef.scrollToEnd({ animated: true });
-    setEnteredText("");
-  };
-
-
-  return (
-    <KeyboardAwareScrollView 
-      resetScrollToCoords={{x: 0, y: 0}}
-      contentContainerStyle={styles.screen}
-    >
-      <View style={styles.messageContainer}>
-        <FlatList
-          ref={(ref) => setmessageRef(ref)}
-          onContentSizeChange={() => {
-            messageRef.scrollToEnd({ animated: true });
-          }}
-          keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
-          data={(props.messageList)}
-          renderItem={(itemData) => <Message content={itemData.item} />}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <View style={styles.input}>
-          <TextInput
-            placeholder="Message"
-            onChangeText={handleEnteredText}
-            value={enteredText}
+  render() {
+    return (
+      <View style={styles.screen}>
+        <View style={styles.messageContainer}>
+          <FlatList
+            ref={(ref) => this.state.messageRef = ref }
+            onContentSizeChange={() => {
+              this.state.messageRef.scrollToEnd({ animated: true });
+            }}
+            keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
+            data={this.props.messageList}
+            renderItem={(itemData) => <Message content={itemData.item} />}
           />
         </View>
+        <View style={styles.inputContainer}>
+          <View style={styles.input}>
+            <TextInput
+              placeholder="Message"
+              onChangeText={(enteredText) => this.setState({enteredText})}
+              value={this.state.enteredText}
+            />
+          </View>
 
-        <View>
-          <Button
-            style={styles.sendButton}
-            title="Send"
-            onPress={handleSendMessage}
-          />
+          <View>
+            <Button
+              style={styles.sendButton}
+              title="Send"
+              onPress={this.handleSendMessage}
+            />
+          </View>
         </View>
       </View>
-    </KeyboardAwareScrollView>
-  );
+    );
+  }
 }
 
 // Getters: props.messageList
 function mapStateToProps(state) {
   return {
-    selectedChat: state.selectedGroup.chatId,
+    selectedChatId: state.selectedChatId,
     messageList: state.messageList,
+    serverName: state.serverName,
+    websocketServerName: state.websocketServerName,
+    authenticationKey: state.authenticationKey,
+    user: state.user,
+    messages: state.messages,
+    isSignedin: state.isSignedin,
   };
 }
 
@@ -132,6 +111,9 @@ function mapDispatchToProps(dispatch) {
   return {
     testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
     newMessage: (msg) => dispatch({ type: "NEW_MESSAGE", value: msg }),
+    setAuthToken: (token) => dispatch({ type: 'SET_AUTH_TOKEN', value: token }),
+    setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data }),
+    setChatMessages: (id) => dispatch({ type: 'SET_SELECTED_CHAT', value: id }),
   };
 }
 
@@ -157,7 +139,7 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "grey",
     flex: 1,
     fontSize: 16,
     paddingHorizontal: 10,

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Text } from "react-native";
+import { Button, Text, Keyboard } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -47,12 +47,23 @@ const MessageStackScreen = () => (
           </Text>
         ),
         headerLeft: () => (
-          <Button title="Side menu" onPress={() => navigation.toggleDrawer()} />
+          <Button
+            title="Side menu"
+            onPress={() => {
+              Keyboard.dismiss();
+              navigation.toggleDrawer()
+              }
+            } 
+          />
         ),
         headerRight: () => (
           <Button
             title="Settings"
-            onPress={() => navigation.push("Settings", { name: "Settings" })}
+            onPress={() => {
+              Keyboard.dismiss();
+              navigation.push("Settings", { name: "Settings" })
+              }
+            }
           />
         ),
       })}
