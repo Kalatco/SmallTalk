@@ -59,7 +59,7 @@ def api_detail_chat(request, group_id):
     return Response(return_list)
 
 @api_view(['GET',])
-@permission_classes([])
+@permission_classes([IsAuthenticated,])
 def api_detail_message(request, chat_id):
     try:
         messages = Message.objects.filter(chat_id=chat_id)
@@ -68,8 +68,12 @@ def api_detail_message(request, chat_id):
     
     return_list = []
     for message in messages:
+
+        created_str = message.created.strftime("%b %d %Y %I:%M%p")
         serializer = MessageSerializer(message)
-        return_list.append(serializer.data)
+        data = serializer.data
+        data['created'] = created_str
+        return_list.append(data)
     return Response(return_list)
 
 

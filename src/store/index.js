@@ -1,7 +1,7 @@
 import { createStore } from "redux";
 
 // IPv4 server address goes here
-const SERVER_ADDRESS = '172.30.41.76';
+const SERVER_ADDRESS = '192.168.0.107';
 
 // State variables
 const initialState = {
@@ -174,7 +174,7 @@ const reducer = (state = initialState, action) => {
           ...state,
           messageList: [
             ...state.messageList,
-            { id: state.index++, message: action.value, author: 'notme', created: '12:00' }
+            action.value,
           ], 
         };
       }
