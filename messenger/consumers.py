@@ -52,6 +52,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_user_message(self, username, message, created_time, chat_room, chat_id):
 
+        print(f"sending message to: {username}")
         await self.channel_layer.group_send(
             f"{username}",
             {

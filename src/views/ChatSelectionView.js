@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from "react-native";
+import { Header, Card, ListItem } from 'react-native-elements';
 import { connect } from "react-redux";
 import axios from 'axios';
 
 function ChatSelectionView(props) {
 
   const changeChat = (chatId) => {
-
     axios.get(`${props.serverName}/messenger/messages/${chatId}`, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
@@ -17,40 +17,50 @@ function ChatSelectionView(props) {
         props.setMessages(res.data);
       })
       .catch((res) => console.log(res));
-
   };
 
+  //style={{ (setSelectedChat == item.id.toString()) : }}
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Groups</Text>
+    <View>
+      <Header
+        centerComponent={{
+          text: 'Chat Selection',
+          style: {
+            color: '#fff',
+            fontSize: 24,
+          }
+        }}
+      />
 
       <FlatList
         data={props.group_list}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View key={item.id.toString()}>
-            <Text style={styles.group}>
+          <Card key={item.id.toString()}>
+            <Text style={styles.cardTitle}>
               {item.name}
             </Text>
+            <Card.Divider/>
 
             {item.chat_list.map((item) => (
-              <TouchableOpacity
+              <ListItem
                 key={item.id.toString()}
-                onPress={() => changeChat(item.id)}
-              >
-                <Text style={styles.chat}>
-                  #{item.name}
-                </Text>
-              </TouchableOpacity>
+                bottomDivider
+                containerStyle={(props.selectedChatId.toString() === item.id.toString()) ? styles.selectedCard : styles.regularCard}
+                onPress={() => changeChat(item.id)}>
+                <ListItem.Content>
+                  <ListItem.Title>
+                    {item.name}
+                  </ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
             ))}
 
-          </View>
+          </Card>
         )}
       />
-      <Button
-        title="Test!"
-        onPress={props.testCommand}
-      />
+
     </View>
   );
 }
@@ -61,13 +71,13 @@ function mapStateToProps(state) {
     serverName: state.serverName,
     authenticationKey: state.authenticationKey,
     group_list: state.user.group_list,
+    selectedChatId: state.selectedChatId,
   };
 }
 
 // Setters: props.newMessage("new message");
 function mapDispatchToProps(dispatch) {
   return {
-    testCommand: () => dispatch({ type: "PING" }),
     setMessages: (list) => dispatch({ type: 'SET_MESSAGES', value: list }),
     setSelectedChat: (id) => dispatch({ type: 'SET_SELECTED_CHAT', value: id }),
   };
@@ -82,11 +92,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  header: {
-    fontSize: 40,
-  },
-  group: {
+  cardTitle: {
     fontSize: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedCard: {
+    backgroundColor: '#a3d2ca',
+  },
+  regularCard: {
+    backgroundColor: 'white',
   },
   chat: {
     fontSize: 16,

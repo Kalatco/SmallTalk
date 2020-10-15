@@ -5,67 +5,19 @@ const SERVER_ADDRESS = '192.168.0.107';
 
 // State variables
 const initialState = {
-  // Temporary state variables, needs to be refactored
-  index: 1,
-  messageList: [],
 
-  // State Variables for accessing content
-  authenticationKey: "",
-  isSignedIn: false,
+  // SERVER
   serverName: `http://${SERVER_ADDRESS}:8000`,
   websocketServerName: `ws://${SERVER_ADDRESS}:8000/ws`,
 
-  // Selected chat
+  // USER
+  user: undefined,
   selectedChatId: 2,
+  messageList: [],
 
-  // Current user
-  user: {
-    id: 1,
-    first_name: "name",
-    last_name: "lastName",
-    username: "firstUser",
-    email: "me@email.com",
-
-    // This wont be like this in production
-    password: "Password1",
-
-    // Groups the user belongs to.
-    group_list: [
-      {
-        name: "Group name 1",
-        id: 1,
-
-        // All chats the group contains
-        chat_list: [
-          {
-            name: "Chat one",
-            id: 1,
-          },
-          {
-            name: "Chat two",
-            id: 2,
-          },
-        ],
-        users: [
-          { "username": "firstUser"}
-        ]
-      },
-      {
-        name: "Group name 2",
-        id: 2,
-        chat_list: [
-          {
-            name: "Chat one",
-            id: 3,
-          },
-          {
-            name: "Chat two",
-            id: 4,
-          },
-        ],
-      },
-    ],
-  },
+  // AUTHENTICATION
+  authenticationKey: String,
+  isSignedIn: false,
 };
 
 // State Actions
