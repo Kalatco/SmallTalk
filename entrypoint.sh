@@ -11,12 +11,9 @@ then
     echo "PostgreSQL started"
 fi
 
-if [ $DEVELOPMENT_MODE = 1]
-then
-
-    python manage.py flush --no-input
-    python manage.py migrate
-    python manage.py loaddata data.json
-fi
+python manage.py flush --no-input
+python manage.py migrate
+python manage.py loaddata data.json
+python manage.py collectstatic
 
 exec "$@"

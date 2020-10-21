@@ -1,15 +1,33 @@
 version: '3.7'
 
 services: 
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
+
+  nginx:
+    build: ./nginx
     volumes: 
-      - ./:/app
+      - static_volume:/home/app/web/staticfiles
     ports:
-      - "8000:8000"
+      - 1337:80
+    depends_on: 
+      - web
+
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    command: gunicorn smallTalk.wsgi:application --bind 0.0.0.0:8000
+    volumes: 
+      - static_volume:/home/app/web/staticfiles
+    expose: 
+      - 8000
     environment: 
-      - DEBUG=1
+      - DEBUG=0
       - SECRET_KEY=foo
       - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
       - SQL_ENGINE=django.db.backends.postgresql
@@ -19,9 +37,33 @@ services:
       - SQL_HOST=db
       - SQL_PORT=5432
       - DATABASE=postgres
-      - DEVELOPMENT_MODE=1
     depends_on: 
       - db
+
+  asgi_web:
+    build: .
+    command: daphne -p 9001 smallTalk.asgi:application
+    expose:
+      - 9001
+    volumes: 
+      - static_volume:/home/app/web/staticfiles
+    links:
+      - redis
+    ports: 
+      - "9001:9001"
+    environment: 
+      - DEBUG=0
+      - SECRET_KEY=foo
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=hello_django_dev
+      - SQL_USER=hello_django
+      - SQL_PASSWORD=hello_django
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE=postgres
+    depends_on: 
+      - redis
 
   db:
     image: postgres:13.0-alpine
@@ -31,6 +73,7 @@ services:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
       - POSTGRES_DB=hello_django_dev
-  
+
 volumes:
   postgres_data:
+  static_volume:

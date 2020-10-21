@@ -7,8 +7,8 @@ const SERVER_ADDRESS = '192.168.0.107';
 const initialState = {
 
   // SERVER
-  serverName: `http://${SERVER_ADDRESS}:8000`,
-  websocketServerName: `ws://${SERVER_ADDRESS}:8000/ws`,
+  serverName: `http://${SERVER_ADDRESS}:1337`,
+  websocketServerName: `ws://${SERVER_ADDRESS}:1337/ws`,
 
   // USER
   user: undefined,
