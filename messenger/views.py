@@ -16,29 +16,31 @@ from messenger.serializers import (
 
 # ---- MESSAGING ROUTES --- #
 
-@api_view(['GET',])
-@permission_classes((IsAuthenticated,))
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated, ])
 def api_detail_profile(request):
     account = Account.objects.filter(email=request.user).first()
     serializer = AccountSerializer(account)
     return Response(serializer.data)
 
-@api_view(['GET',])
-@permission_classes((IsAuthenticated,))
+
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated, ])
 def api_all_groups(request):
     try:
         groups = Group.objects.all()
     except Group.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     return_list = []
     for group in groups:
         serializer = GroupSerializer(group)
         return_list.append(serializer.data)
     return Response(return_list)
 
-@api_view(['GET',])
-@permission_classes([IsAuthenticated,])
+
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated, ])
 def api_detail_chat(request, group_id):
 
     try:
@@ -46,7 +48,7 @@ def api_detail_chat(request, group_id):
         group = Group.objects.get(pk=group_id)
     except Chat.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     # Verify user has access to this content
     user = request.user
     if not group.users.all().filter(email=user):
@@ -58,14 +60,15 @@ def api_detail_chat(request, group_id):
         return_list.append(serializer.data)
     return Response(return_list)
 
-@api_view(['GET',])
-@permission_classes([IsAuthenticated,])
+
+@api_view(['GET', ])
+@permission_classes([IsAuthenticated, ])
 def api_detail_message(request, chat_id):
     try:
         messages = Message.objects.filter(chat_id=chat_id)
     except Message.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     return_list = []
     for message in messages:
 
@@ -80,8 +83,8 @@ def api_detail_message(request, chat_id):
 # --- ACCOUNT ROUTES --- #
 
 
-@api_view(['POST'])
-@permission_classes([])
+@api_view(['POST', ])
+@permission_classes([IsAuthenticated, ])
 def registration_view(request):
     serializer = RegistrationSerializer(data=request.data)
     data = {}
