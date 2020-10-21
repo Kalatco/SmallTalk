@@ -160,4 +160,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+'''
+    For supporting media files, configure from:
+    https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+'''
