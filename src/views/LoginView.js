@@ -5,26 +5,16 @@ import {
   Button,
   StyleSheet,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { color } from "react-native-reanimated";
+import { Input, Image } from 'react-native-elements';
 import { connect } from "react-redux";
 import axios from 'axios';
 
 function SigninView(props) {
   const [emailText, setEmailText] = useState("");
-  const handleEmailInput = (enteredText) => {
-    setEmailText(enteredText);
-  };
-
   const [passwordText, setPasswordText] = useState("");
-  const handlePasswordInput = (enteredText) => {
-    setPasswordText(enteredText);
-  };
-
   const [isInvalidLogin, setisInvalidLogin] = useState(false);
 
   const login = () => {
-
     let formData = new FormData();
     // (Django won't let me rename 'username' to 'email')
     formData.append('username', emailText);
@@ -72,31 +62,38 @@ function SigninView(props) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.textBoxContainer}>
-        <TextInput
-          placeholder="Email"
-          onChangeText={handleEmailInput}
-          style={styles.textBox}
-          value={emailText}
-          underlineColorAndroid="transparent"
-        />
-        <TextInput
-          placeholder="Password"
-          onChangeText={handlePasswordInput}
-          value={passwordText}
-          style={styles.textBox}
-          underlineColorAndroid="transparent"
-          secureTextEntry={true}
-        />
 
-        <Button style={styles.button} title="Sign In" onPress={login} />
+      <Image
+        source={require('./../assets/smallTalk.png')}
+        style={{ width: 400, height: 200 }}
+      />
+
+      <View style={styles.loginForm}>
+        <Input
+          placeholder="Email"
+          style={styles.inputStyle}
+          leftIcon={{ type: 'Feather', name: 'email' }}
+          autoCorrect={false}
+          onChangeText={(input) => setEmailText(input)}
+        />
+        <Input
+          placeholder="Password"
+          style={styles.inputStyle}
+          leftIcon={{ type: 'Feather', name: 'lock' }}
+          secureTextEntry={true}
+          onChangeText={(input) => setPasswordText(input)}
+        />
+        <Button style={styles.loginButton} title="Sign In" onPress={login} />
+      </View>
+
+      <View style={{ flex: 1, position: "relative" }}>
         {isInvalidLogin && (
-          <View>
-            <Text style={styles.invalidCredentials}>
-              User email or password is incorrect
-            </Text>
-          </View>
-        )}
+            <View>
+              <Text style={styles.invalidCredentials}>
+                User email or password is incorrect
+              </Text>
+            </View>
+          )}
       </View>
     </View>
   );
@@ -127,51 +124,29 @@ export default connect(mapStateToProps, mapDispatchToProps)(SigninView);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    flex: 3,
   },
-  headerText: {
-    fontSize: 25,
-    textAlign: "center",
-    margin: 10,
-    color: "black",
-    fontWeight: "bold",
+  logoStyle: {
+    width: 400,
+    height: 200,
+    flex: 1,
+    position: "relative",
   },
-  button: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginVertical: 10,
-    borderRadius: 5,
-  },
-  textBox: {
-    fontSize: 20,
-    alignSelf: "stretch",
-    height: 45,
-    paddingRight: 45,
-    paddingLeft: 8,
-    borderWidth: 1,
-    paddingVertical: 0,
-    borderColor: color.grey,
-    borderRadius: 5,
-  },
-  textBoxContainer: {
+  loginForm: {
     position: "relative",
     alignSelf: "stretch",
     justifyContent: "center",
+    marginHorizontal: 20,
+    flex: 1,
   },
-  touchableButton: {
-    position: "absolute",
-    right: 3,
-    height: 40,
-    width: 35,
-    padding: 2,
+  inputStyle: {
+    
   },
-  buttonImage: {
-    resizeMode: "contain",
-    height: "100%",
-    width: "100%",
-  }, 
+  loginButton: {
+    borderRadius: 5,
+  },
   invalidCredentials: {
     color: "red",
     textAlign: "center",

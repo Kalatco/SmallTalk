@@ -1,28 +1,28 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 const Message = (props) => {
-  console.log(props.content)
   return (
     <View>
       <View style={
-        props.content.sender.username == "testUser1" ?
+        (props.content.sender.username === props.user) ?
         styles.selfUserName : styles.otherUserName
       }>
         <Text>{props.content.sender.username}</Text>
       </View>
       <View style={
-          props.content.sender.username == 'testUser1' ?
+          (props.content.sender.username === props.user) ?
           styles.selfMessageStyle : styles.otherMessageStyle
       }>
-        <Text>{props.content.text}</Text>
+        <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
+
+        <Text style={
+          props.content.sender.username === props.user ?
+          styles.selfTimeStamp : styles.otherTimeStamp
+        }>
+          {props.content.created}
+        </Text>
       </View>
-        <View style={
-        props.content.sender.otherUserName == 'testUser1' ?
-        styles.selfTimeStamp : styles.otherTimeStamp
-        }> 
-          <Text>{props.content.created}</Text>
-        </View>
     </View>
   );
 };
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   selfUserName:{
     fontSize: 6,
     alignSelf:'flex-end',
+    paddingRight: 5,
   },
   selfMessageStyle: {
     fontSize: 18,
@@ -47,12 +48,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   selfTimeStamp: {
-    fontSize: 6,
+    fontSize: 11,
     alignSelf: 'flex-end',
   },
   otherUserName:{
-    fontSize: 6,
+    fontSize: 11,
     alignSelf:'flex-start',
+    paddingLeft: 5,
   },
   otherMessageStyle: {
     fontSize: 18,
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   otherTimeStamp: {
-    fontSize: 6,
+    fontSize: 11,
     alignSelf: 'flex-start',
   },
 });

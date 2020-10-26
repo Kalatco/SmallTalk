@@ -31,6 +31,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         chat_obj = Chat.objects.get(pk=data['chat'])
         sender = chat_obj.group.users.all().filter(username=self.user_name)
 
+        print(f"message recieved by {self.user_name}, msg: {data['message']}")
+
         if chat_obj and sender:
             datetimeObj = datetime.now()
             created_time = datetimeObj.strftime("%b %d %Y %I:%M%p")
@@ -50,6 +52,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_user_message(self, username, message, created_time, chat_room, chat_id):
 
+        print(f"sending message to: {username}")
         await self.channel_layer.group_send(
             f"{username}",
             {

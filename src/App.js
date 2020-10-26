@@ -3,6 +3,7 @@ import { Button, Text, Keyboard } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import Icon from 'react-native-vector-icons/Feather';
 import { Provider } from "react-redux";
 import { store } from "./store/index";
 import { connect } from "react-redux";
@@ -47,18 +48,22 @@ const MessageStackScreen = () => (
           </Text>
         ),
         headerLeft: () => (
-          <Button
-            title="Side menu"
+          <Icon
+            name="menu"
+            style={{marginLeft: 3}}
+            size={40}
             onPress={() => {
               Keyboard.dismiss();
               navigation.toggleDrawer()
               }
-            } 
+            }
           />
         ),
         headerRight: () => (
-          <Button
-            title="Settings"
+          <Icon
+            name="user"
+            style={{marginRight: 3}}
+            size={40}
             onPress={() => {
               Keyboard.dismiss();
               navigation.push("Settings", { name: "Settings" })
