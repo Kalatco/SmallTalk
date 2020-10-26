@@ -8,6 +8,20 @@
 
 Django, node, expo-cli must be installed globally
 
+## Run server deployment on Docker (Optional)
+
+1. Make sure you are logged into docker.
+2. Go to the project folder.
+3. Run: `docker-compose up -d --build` to build and run the docker containers.
+
+NOTE: the next 3 commands are for inital setup and do not need to be ran each time you run the docker.
+
+3. Run: `docker-compose exec web python manage.py migrate` to load the database tables.
+4. Run: `docker-compose exec web python manage.py loaddata data.json` to load the data.
+5. Run: `docker-compose exec web python manage.py collectstatic` to create the static files for the nginx server.
+6. Configure the `src/store/index.js` SERVER_ADDRESS to point to port `8080`.
+6. To stop the server, run: `docker-compose down`.
+
 ### Configuration
 
 1. On your terminal run the `ipconfig` command to get your IPv4 address under `Wireless LAN adapter Wi-Fi`
