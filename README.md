@@ -16,6 +16,7 @@ NOTE: the next 3 commands are for inital setup and do not need to be ran each ti
 6. Run: `docker-compose exec web python manage.py collectstatic` to create the static files for the nginx server.
 7. Configure the `src/store/index.js` SERVER_ADDRESS to point to port `8080`.
 8. To stop the server, run: `docker-compose down`.
+9. To remove local storage from the database and static files, run: `docker-compose down -v`.
 
 ## Run for development
 
