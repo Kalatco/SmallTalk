@@ -95,3 +95,10 @@ def registration_view(request):
     else:
         data = serializer.errors
     return Response(data)
+
+
+# --- TEST CONNECTION --- #
+
+@api_view(['GET',])
+def api_test_connection(request):
+    return Response(status=status.HTTP_200_OK)

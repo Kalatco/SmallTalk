@@ -7,7 +7,7 @@ from django.urls import re_path
 from messenger import consumers
 
 websocket_urlpatterns = [
-    re_path(r'ws/message/(?P<room_name>\w+)/$', consumers.ChatConsumer),
+    re_path(r'ws/client/(?P<room_name>\w+)/$', consumers.ChatConsumer),
 ]
 
 application = ProtocolTypeRouter({
