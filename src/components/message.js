@@ -17,7 +17,7 @@ const Message = (props) => {
         <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
 
         <Text style={
-          props.content.sender.username === props.user ?
+          props.content.sender.id === props.id ?
           styles.selfTimeStamp : styles.otherTimeStamp
         }>
           {props.content.created}

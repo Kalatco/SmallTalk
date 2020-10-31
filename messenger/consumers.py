@@ -39,7 +39,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
             # Emit message to online users
             for user in chat_obj.group.users.all():
-                async_to_sync(self.send_user_message)(user.username, data['message'], created_time, chat_obj.name, chat_obj.pk)
+                async_to_sync(self.send_user_message)(sender.id, data['message'], created_time, chat_obj.name, chat_obj.pk)
 
             # Save message to database
             message_obj = Message()
@@ -50,7 +50,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             message_obj.save()
 
 
-    async def send_user_message(self, username, message, created_time, chat_room, chat_id):
+    async def send_user_message(self, id, username, message, created_time, chat_room, chat_id):
 
         print(f"sending message to: {username}")
         await self.channel_layer.group_send(
@@ -62,6 +62,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'username': self.user_name,
                 'chat_room': chat_room,
                 'chat_id': chat_id,
+                'user_id': self.id,
             }
         )
 
@@ -70,6 +71,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         message = event['message']
         created = event['created']
         username = event['username']
+        user_id = event['id']
         chat_room = event['chat_room']
         chat_id = event['chat_id']
 
