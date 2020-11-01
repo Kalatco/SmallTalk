@@ -87,6 +87,13 @@ class MessageView extends React.Component {
             />
             <Icon
               color="#5eaaa8"
+              name="image"
+              style={styles.sendButton}
+              size={40}
+              onPress={this.handleSendMessage}
+             / >
+            <Icon
+              color="#5eaaa8"
               name="send"
               style={styles.sendButton}
               size={40}

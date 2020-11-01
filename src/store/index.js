@@ -1,7 +1,7 @@
 import { createStore } from "redux";
 
 // IPv4 server address goes here
-const SERVER_ADDRESS = '192.168.1.132';
+const SERVER_ADDRESS = '172.30.42.156';
 
 // State variables
 const initialState = {
