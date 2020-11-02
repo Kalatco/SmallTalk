@@ -1,6 +1,6 @@
 
 # Ignore react native code in /src/
-/src
+src/
 
 node_modules/**/*
 .expo/*

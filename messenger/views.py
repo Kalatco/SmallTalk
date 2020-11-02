@@ -84,7 +84,7 @@ def api_detail_message(request, chat_id):
 
 
 @api_view(['POST', ])
-@permission_classes([IsAuthenticated, ])
+@permission_classes([])
 def registration_view(request):
     serializer = RegistrationSerializer(data=request.data)
     data = {}
