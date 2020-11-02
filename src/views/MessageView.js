@@ -4,6 +4,7 @@ import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
 import { connect } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
 
 //function MessageView(props) {
 class MessageView extends React.Component {
@@ -59,6 +60,10 @@ class MessageView extends React.Component {
     this.state.enteredText = "";
   };
 
+  handleImage = () => {
+
+  }
+
   render() {
     return (
       <View style={styles.screen}>
@@ -90,7 +95,7 @@ class MessageView extends React.Component {
               name="image"
               style={styles.sendButton}
               size={40}
-              onPress={this.handleSendMessage}
+              onPress={this.handleImage}
              / >
             <Icon
               color="#5eaaa8"
