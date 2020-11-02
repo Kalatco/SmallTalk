@@ -15,6 +15,7 @@ class MessageView extends React.Component {
 
     this.state = {
       enteredText: "",
+      enteredImage:"",
       messageRef: undefined,
       websocket: new WebSocket(`${this.props.websocketServerName}/message/${props.user.username}/`),
     }
@@ -52,6 +53,7 @@ class MessageView extends React.Component {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
+        'image': this.state.enteredImage,
       }));
     } catch(error) {
       console.log(error)
@@ -61,8 +63,21 @@ class MessageView extends React.Component {
     this.state.enteredText = "";
   };
 
-  handleImage = () => {
+  handleImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      quality: 1,
+    })
 
+    console.log(result);
+
+    if(!result.cancelled) {
+      this.setState({
+        enteredImage: result,
+      })
+    }
   }
 
   render() {
