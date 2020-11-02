@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
+import { FlatList, StyleSheet, TextInput, View } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
@@ -14,12 +14,24 @@ class MessageView extends React.Component {
     this.state = {
       enteredText: "",
       messageRef: undefined,
-      websocket: new WebSocket(`${this.props.websocketServerName}/message/${props.user.username}/`),
+      webSocketStr: `${props.websocketServerName}/client/${props.user.username}/`,
+      websocket: undefined,
+      serverConnected: false,
+      updateUIKey: 1,
     }
   }
 
-  // Load data from server
+  // Load data from server on component load.
   async componentDidMount() {
+
+    this.state.websocket = new WebSocket(this.state.webSocketStr);
+
+    // Update UI with new server conneciton status
+    this.setState({ state: this.state });
+
+    this.state.websocket.onopen = (e) => {
+      this.state.serverConnected = true;
+    }
 
     this.state.websocket.onmessage = (e) => {
       // a message was received
@@ -30,18 +42,71 @@ class MessageView extends React.Component {
       }
     };
 
-    this.state.websocket.onerror = (e) => {
-      // an error occurred
-      console.log(e.message);
-    };
-
     this.state.websocket.onclose = (e) => {
       // connection closed
-      console.log(e.code, e.reason);
-      Alert.alert("Connection closed")
+      this.state.serverConnected = false;
+      this.reconnectToServer();
     };
   }
 
+  // When socket connection is closed, update UI with status, and attempt to reconnect.
+  reconnectToServer() {
+    const self = this;
+
+    // Update UI with new server conneciton status
+    this.setState({ state: this.state });
+
+    // When the server is found again, reconnect websocket
+    const connect = () => {
+      this.state.websocket = new WebSocket(this.state.webSocketStr);
+      this.state.serverConnected = true;
+
+      // Update UI with new server conneciton status
+      this.setState({ state: this.state });
+      
+      this.state.websocket.onopen = (e) => {
+        this.state.serverConnected = true;
+      }
+
+      this.state.websocket.onmessage = (e) => {
+        // a message was received
+        const data = JSON.parse(e.data);
+        console.log(data)
+        if (this.props.selectedChatId == data.chat.id) {
+          this.props.newMessage(data);
+        }
+      };
+
+      this.state.websocket.onclose = (e) => {
+        // connection closed
+        this.state.serverConnected = false;
+        this.reconnectToServer();
+      };
+    }
+
+    // Attempt to talk to server until its reachable and connect websocket.
+    const findServer = setInterval(() => {
+
+      try {
+        Promise
+        .race([
+          fetch(`${self.props.serverName}/api/ping`),
+          new Promise((_, reject) => setTimeout(() => reject(), 1000))
+        ])
+        .then(() => {
+          console.log('server found');
+          connect();
+          clearInterval(findServer);
+        })
+        .catch(() => {
+          console.log('no server found');
+        });
+      } catch {
+        console.log('error in connection attempt');
+      }
+
+    }, 3000);
+  }
 
   handleSendMessage = () => {
 
@@ -62,6 +127,16 @@ class MessageView extends React.Component {
   render() {
     return (
       <View style={styles.screen}>
+
+        {/* Indicates if the client is connected to the server's websocket */}
+        <View
+          key={this.state.updateUIKey}
+          style={{
+            ...styles.serverStatus,
+            backgroundColor: `${(this.state.serverConnected) ? '#4BB543' : '#FF0000'}`
+          }}
+        />
+
         <View style={styles.messageContainer}>
           <FlatList
             ref={(ref) => this.state.messageRef = ref }
@@ -129,6 +204,14 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor:'#e8ded2',
+  },
+  serverStatus: {
+    position: 'absolute',
+    right: 3,
+    top: 3,
+    borderRadius: 15,
+    height: 17,
+    width: 17,
   },
   messageContainer: {
     flex: 11,

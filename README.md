@@ -54,15 +54,3 @@ Note: The database should only have to be setup the first time you ever ran the 
 1. Install [Node.js](https://nodejs.org/en/download/)
 2. npm install expo-cli --global
 3. Depending on your Operating System, run an [Android Emulator](https://docs.expo.io/workflow/android-studio-emulator/) or an [IOS Simulator](https://docs.expo.io/workflow/ios-simulator/) to be able to view the React Native app.
-
-## Server Routes
-
-`AUTH` requires an URL header of "Authorization: Token < token goes here >"
-
-| Function | Route |
-| ------ | ------  |
-| `POST` login | /login |
-| `POST` register | /register |
-| `AUTH` `GET` groups | /messenger/groups |
-| `AUTH` `GET` chats | /messenger/chats/<int: group_id> |
-| `AUTH` `GET` messanges | /messenger/messages/<int: chat_id> |
