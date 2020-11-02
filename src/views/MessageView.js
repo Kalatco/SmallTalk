@@ -6,6 +6,7 @@ import Message from "./../components/message";
 import { connect } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 
+
 //function MessageView(props) {
 class MessageView extends React.Component {
 
@@ -75,7 +76,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.id}/>}
           />
         </View>
 
