@@ -1,0 +1,20 @@
+
+# Ignore react native code in /src/
+src/
+
+node_modules/**/*
+.expo/*
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+*.sqlite3
+*.pyc
+*.log
+
+# macOS
+.DS_Store
