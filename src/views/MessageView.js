@@ -91,7 +91,8 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.id}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.id}
+            server={this.props.serverName}/>}
           />
         </View>
 
