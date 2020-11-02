@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async, async_to_sync
 from datetime import datetime
 from messenger.models import Message, Chat
 
+
 class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
@@ -17,13 +18,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         await self.accept()
 
-
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
-
 
     @sync_to_async
     def receive(self, text_data):
@@ -46,13 +45,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             # Save message to database
             message_obj = Message()
             # sender is in list format, get first sender
-            message_obj.sender = sender
-            message_obj.chat = chat_obj 
+            message_obj.sender = sender[0]
+            message_obj.chat = chat_obj
             message_obj.text = data['message']
             message_obj.save()
 
-
-    async def send_user_message(self, username, sender_id,  message, created_time, chat_room, chat_id):
+    async def send_user_message(self, username, message, created_time, chat_room, chat_id):
 
         print(f"sending message to: {username}")
         await self.channel_layer.group_send(
@@ -67,7 +65,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'chat_id': chat_id,
             }
         )
-
 
     async def user_message(self, event):
         message = event['message']

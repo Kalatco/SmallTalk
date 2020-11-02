@@ -1,7 +1,7 @@
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
-#import messenger.routing
+# import messenger.routing
 from django.urls import re_path
 
 from messenger import consumers
@@ -11,11 +11,11 @@ websocket_urlpatterns = [
 ]
 
 application = ProtocolTypeRouter({
-    #'websocket': AuthMiddlewareStack(
+    # 'websocket': AuthMiddlewareStack(
     #    URLRouter(
     #        messenger.routing.websocket_urlpatterns
     #    )
-    #)
+    # )
     'websocket': AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(

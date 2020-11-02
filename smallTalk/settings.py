@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o(!2q6v@(-7vl+7y%f#@dg!s9939wsu(8boalazv-4z=b66y^l'
+SECRET_KEY = os.environ.get("SECRET_KEY", default='fooBar')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=1))
 
-ALLOWED_HOSTS = ['0.0.0.0', '192.168.0.107', '172.30.41.76', '172.30.43.128']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -92,27 +93,47 @@ WSGI_APPLICATION = 'smallTalk.wsgi.application'
 
 ASGI_APPLICATION = 'smallTalk.routing.application'
 
+# Local caching for testing websockets.
 CHANNEL_LAYERS = {
-    #'default': {
-    #    'BACKEND': 'channels_redis.core.RedisChannelLayer',
-    #    'CONFIG': {
-    #        "hosts": [('localhost', 6379)],
-    #    },
-    #},
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
     }
 }
 
+# If in production mode, access redis server instead of local caching.
+if not DEBUG:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [('redis', 6379)],
+            },
+        },
+    }
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# Local database used for testing.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
 }
+
+# If in production Mode, load database URL from Enviroment.
+if not DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+            "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+            "USER": os.environ.get("SQL_USER", "user"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+            "HOST": os.environ.get("SQL_HOST", "localhost"),
+            "PORT": os.environ.get("SQL_PORT", "5432"),
+        },
+    }
 
 
 # Password validation
@@ -151,4 +172,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+'''
+    For supporting media files, configure from:
+    https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
+'''
