@@ -98,7 +98,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Last Name:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder={props.user.last_name}
-          onChangeText={handleLastNameInput}
+          onChangeText={(value) => setLastNameText(value)}
           value={lastNameText}
         />
       </View>
@@ -107,7 +107,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Updated Password:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter New Password"
-          onChangeText={handleNewPasswordInput}
+          onChangeText={(value) => setNewPasswordText(value)}
           value={newPasswordText}
           secureTextEntry={true}
         />
@@ -117,7 +117,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Confirm New Password:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter New Password"
-          onChangeText={handleConfirmNewPasswordInput}
+          onChangeText={(value) => setConfirmNewPasswordText(value)}
           value={confirmNewPasswordText}
           secureTextEntry={true}
         />
@@ -128,7 +128,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>(REQUIRED for Name/Password Changes)</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter Current Password"
-          onChangeText={handleCurrentPasswordInput}
+          onChangeText={(value) => setCurrentPasswordText(value)}
           value={currentPasswordText}
           secureTextEntry={true}
         />
