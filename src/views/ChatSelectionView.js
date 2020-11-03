@@ -7,7 +7,7 @@ import axios from 'axios';
 function ChatSelectionView(props) {
 
   const changeChat = (chatId) => {
-    axios.get(`${props.serverName}/messenger/messages/${chatId}`, {
+    axios.get(`${props.serverName}/api/messages/${chatId}`, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
