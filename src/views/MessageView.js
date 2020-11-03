@@ -118,6 +118,7 @@ class MessageView extends React.Component {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
+        'image': 'data:image/png;base64,${this.state.enteredImage.base64}'
       }));
     } catch(error) {
       console.log(error)
@@ -131,6 +132,7 @@ class MessageView extends React.Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
+      base64: true,
       aspect: [4, 3],
       quality: 1,
     })
@@ -139,7 +141,7 @@ class MessageView extends React.Component {
 
     if(!result.cancelled) {
       this.setState({
-        enteredImage: result.uri,
+        enteredImage: result,
       })
       console.log(result.uri);
     }
