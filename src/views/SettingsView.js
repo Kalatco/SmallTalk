@@ -15,26 +15,6 @@ function SettingsView(props) {
   const [currentPasswordText, setCurrentPasswordText] = useState("");
   const [newGroupText, setNewGroupText] = useState("");
 
-  const handleFirstNameInput = (enteredText) => {
-    setFirstNameText(enteredText);
-  };
-
-  const handleLastNameInput = (enteredText) => {
-    setLastNameText(enteredText);
-  };
-
-  const handleNewPasswordInput = (enteredText) => {
-    setNewPasswordText(enteredText);
-  };
-
-  const handleConfirmNewPasswordInput = (enteredText) => {
-    setConfirmNewPasswordText(enteredText);
-  }
-
-  const handleCurrentPasswordInput = (enteredText) => {
-    setCurrentPasswordText(enteredText);
-  };
-
   const saveChanges = () => {
 
     console.log("Saving Settings Changes!");
@@ -109,7 +89,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>First Name:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder={props.user.first_name}
-          onChangeText={handleFirstNameInput}
+          onChangeText={(value) => setFirstNameText(value)}
           value={firstNameText}
         />
       </View>
