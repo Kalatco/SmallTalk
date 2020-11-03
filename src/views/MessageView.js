@@ -141,7 +141,7 @@ class MessageView extends React.Component {
       this.setState({
         enteredImage: result.uri,
       })
-      console.log(enteredImage.uri);
+      console.log(result.uri);
     }
   }
 
