@@ -118,7 +118,6 @@ class MessageView extends React.Component {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
-        'image': this.state.enteredImage,
       }));
     } catch(error) {
       console.log(error)
@@ -142,6 +141,7 @@ class MessageView extends React.Component {
       this.setState({
         enteredImage: result.uri,
       })
+      console.log(enteredImage.uri);
     }
   }
 
@@ -166,7 +166,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.id}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}
             server={this.props.serverName}/>}
           />
         </View>

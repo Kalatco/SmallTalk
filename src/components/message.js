@@ -1,17 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Image } from 'react-native-elements';
 
 const Message = (props) => {
   return (
     <View>
       <View style={
-        (props.content.sender.id === props.user.id) ?
+        (props.content.sender.username === props.user) ?
         styles.selfUserName : styles.otherUserName
       }>
         <Text>{props.content.sender.username}</Text>
       </View>
       <View style={
-          (props.content.sender.id === props.user.id) ?
+          (props.content.sender.username === props.user) ?
           styles.selfMessageStyle : styles.otherMessageStyle
       }>
         <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
@@ -23,7 +24,7 @@ const Message = (props) => {
             />
         )}
         <Text style={
-          (props.content.sender.id === props.user.id) ?
+          (props.content.sender.username === props.user) ?
           styles.selfTimeStamp : styles.otherTimeStamp
         }>
           {props.content.created}

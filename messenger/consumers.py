@@ -34,7 +34,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
 
         if chat_obj and sender:
-            sender = sender[0]
             datetimeObj = datetime.now()
             created_time = datetimeObj.strftime("%b %d %Y %I:%M%p")
 
@@ -60,7 +59,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'message': message,
                 'created': created_time,
                 'username': self.user_name,
-                'sender_id': sender_id,
                 'chat_room': chat_room,
                 'chat_id': chat_id,
             }
@@ -72,14 +70,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         username = event['username']
         chat_room = event['chat_room']
         chat_id = event['chat_id']
-        sender_id = event['sender_id']
 
         await self.send(text_data=json.dumps({
             'text': message,
             'created': created,
             'sender': {
                 'username': username,
-                'id': sender_id,
             },
             'chat': {
                 'name': chat_room,
