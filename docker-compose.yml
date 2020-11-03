@@ -1,0 +1,52 @@
+version: '3.7'
+
+services: 
+
+  nginx:
+    build: ./nginx
+    volumes: 
+      - static_volume:/home/app/web/staticfiles
+    ports:
+      - 8080:80
+    depends_on: 
+      - web
+      - asgi_web
+
+  redis:
+    image: redis
+    command: redis-server
+
+  web:
+    build: .
+    command: gunicorn smallTalk.wsgi:application --bind 0.0.0.0:8000
+    volumes: 
+      - static_volume:/home/app/web/staticfiles
+    env_file: 
+      - ./.env
+    depends_on: 
+      - db
+
+  asgi_web:
+    build: .
+    command: gunicorn smallTalk.asgi:application -w 1 -k uvicorn.workers.UvicornWorker -b :9001
+    volumes: 
+      - static_volume:/home/app/web/staticfiles
+    env_file: 
+      - ./.env
+    depends_on: 
+      - redis
+      - db
+
+  db:
+    image: postgres:13.0-alpine
+    volumes: 
+      - postgres_data:/var/lib/postgresql/data/
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=Administrator
+      - POSTGRES_DB=smallTalk_deploy
+    command: -p 5433
+
+volumes:
+  postgres_data:
+  static_volume:

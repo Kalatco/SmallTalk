@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async, async_to_sync
 from datetime import datetime
 from messenger.models import Message, Chat
 
+
 class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
@@ -17,13 +18,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         await self.accept()
 
-
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
-
 
     @sync_to_async
     def receive(self, text_data):
@@ -67,7 +66,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'chat_id': chat_id,
             }
         )
-
 
     async def user_message(self, event):
         message = event['message']
