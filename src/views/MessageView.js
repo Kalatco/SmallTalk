@@ -75,7 +75,7 @@ class MessageView extends React.Component {
 
     if(!result.cancelled) {
       this.setState({
-        enteredImage: result,
+        enteredImage: result.uri,
       })
     }
   }
