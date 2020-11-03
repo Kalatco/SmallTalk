@@ -117,6 +117,7 @@ class MessageView extends React.Component {
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
       }));
+      //console.log(this.props.user)
     } catch(error) {
       console.log(error)
     }
@@ -146,7 +147,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.id}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}/>}
           />
         </View>
 
@@ -161,13 +162,6 @@ class MessageView extends React.Component {
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
             />
-            <Icon
-              color="#5eaaa8"
-              name="image"
-              style={styles.sendButton}
-              size={40}
-              onPress={this.handleSendMessage}
-             / >
             <Icon
               color="#5eaaa8"
               name="send"
