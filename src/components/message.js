@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { Image } from 'react-native-elements';
 
 const Message = (props) => {
   return (
@@ -16,6 +17,12 @@ const Message = (props) => {
       }>
         <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
 
+        {props.content.image && (
+          <Image
+            source={{uri: '${props.server}${props.content.image}'}}
+            style={{width: 200, height: 200}}
+            />
+        )}
         <Text style={
           (props.content.sender.id === props.user.id) ?
           styles.selfTimeStamp : styles.otherTimeStamp

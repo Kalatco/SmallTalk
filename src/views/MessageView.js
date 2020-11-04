@@ -4,6 +4,8 @@ import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
 import { connect } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
+
 
 
 //function MessageView(props) {
@@ -14,6 +16,7 @@ class MessageView extends React.Component {
 
     this.state = {
       enteredText: "",
+      enteredImage:"",
       messageRef: undefined,
       webSocketStr: `${props.websocketServerName}/client/${props.user.username}/`,
       websocket: undefined,
@@ -116,6 +119,7 @@ class MessageView extends React.Component {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
+        'image': 'data:image/png;base64,${this.state.enteredImage.base64}'
       }));
       //console.log(this.props.user)
     } catch(error) {
@@ -125,6 +129,25 @@ class MessageView extends React.Component {
     this.state.messageRef.scrollToEnd({ animated: true });
     this.state.enteredText = "";
   };
+
+  handleImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      base64: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
+
+    console.log(result);
+
+    if(!result.cancelled) {
+      this.setState({
+        enteredImage: result,
+      })
+      console.log(result.uri);
+    }
+  }
 
   render() {
     return (
@@ -147,7 +170,8 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}
+            server={this.props.serverName}/>}
           />
         </View>
 
@@ -162,6 +186,13 @@ class MessageView extends React.Component {
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
             />
+            <Icon
+              color="#5eaaa8"
+              name="image"
+              style={styles.sendButton}
+              size={40}
+              onPress={this.handleImage}
+             / >
             <Icon
               color="#5eaaa8"
               name="send"
