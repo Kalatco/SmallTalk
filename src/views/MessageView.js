@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
 import { connect } from 'react-redux';
 
+
 //function MessageView(props) {
 class MessageView extends React.Component {
 
@@ -38,7 +39,7 @@ class MessageView extends React.Component {
       const data = JSON.parse(e.data);
       console.log(data)
       if (this.props.selectedChatId == data.chat.id) {
-        this.props.newMessage(data);
+        //this.props.newMessage(data);
       }
     };
 
@@ -116,6 +117,7 @@ class MessageView extends React.Component {
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
       }));
+      //console.log(this.props.user)
     } catch(error) {
       console.log(error)
     }
@@ -145,7 +147,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}/>}
           />
         </View>
 
