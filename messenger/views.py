@@ -1,5 +1,6 @@
 import json
 
+from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -145,9 +146,12 @@ def api_update_settings(request):
             else:
                 # print("User is not admin in this group")
                 return Response({"User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
-        
+        try:
+            user.save()
+        except IntegrityError:
+            # print("User with this username already exists: " + data["username"])
+            return Response({"User with this username already exists. No Account changes made."}, status=status.HTTP_400_BAD_REQUEST)
 
-        user.save()
         serializer = AccountSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
