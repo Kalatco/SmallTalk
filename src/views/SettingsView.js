@@ -135,43 +135,39 @@ function SettingsView(props) {
       </View>
       {/*START OF GROUPS VIEW*/}
       <View>
-        <FlatList
-          data={props.group_list}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Card key={item.id.toString()}>
-              <Text style={settingsStyles.cardTitle}>
-                {item.name}
-              </Text>
-              <Card.Divider/>
-              {item.users.map((item) => (
-                <ListItem
-                  key={item.username.toString()}
-                  bottomDivider
-                  onPress={() => changeChat(item.username)}>
-                  <ListItem.Content>
-                    <View style={settingsStyles.rowContainer}>
-                      <View style={settingsStyles.rowItem}>
-                        <Text>
-                          {item.username}
-                        </Text>
-                      </View>
-                      <View style={settingsStyles.rowItem}> 
-                        <Button title="delete" color="darkred"/>
-                      </View>
-                    </View>                  
-                  </ListItem.Content>
-                </ListItem>
-              ))}
-              <Card.Divider/>
-              <ListItem>
-                <ListItem.Content style={settingsStyles.addUserContainer}>
-                  <Button sytle={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+        {props.group_list.map((item) => (
+          <Card key={item.id.toString()}>
+            <Text style={settingsStyles.cardTitle}>
+              {item.name}
+            </Text>
+            <Card.Divider/>
+            {item.users.map((item) => (
+              <ListItem
+                key={item.username.toString()}
+                bottomDivider
+                onPress={() => changeChat(item.username)}>
+                <ListItem.Content>
+                  <View style={settingsStyles.rowContainer}>
+                    <View style={settingsStyles.rowItem}>
+                      <Text>
+                        {item.username}
+                      </Text>
+                    </View>
+                    <View style={settingsStyles.rowItem}>
+                      <Button title="delete" color="darkred"/>
+                    </View>
+                  </View>
                 </ListItem.Content>
               </ListItem>
-            </Card>
-          )}
-        />       
+            ))}
+            <Card.Divider/>
+            <ListItem>
+              <ListItem.Content style={settingsStyles.addUserContainer}>
+                <Button sytle={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+              </ListItem.Content>
+            </ListItem>
+          </Card>
+        ))}
       </View>
       {/*START OF SAVE BUTTON VIEW*/}
       <View style={settingsStyles.buttonContainer}>

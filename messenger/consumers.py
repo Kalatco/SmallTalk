@@ -1,4 +1,7 @@
 import json
+import base64
+import os, random, string
+from django.core.files.base import ContentFile
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from asgiref.sync import sync_to_async, async_to_sync
 from datetime import datetime
@@ -38,32 +41,42 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             datetimeObj = datetime.now()
             created_time = datetimeObj.strftime("%b %d %Y %I:%M%p")
 
-            # Emit message to online users
-            for user in chat_obj.group.users.all():
-                async_to_sync(self.send_user_message)(user.username, sender.id, data['message'], created_time, chat_obj.name, chat_obj.pk)
-
             # Save message to database
             message_obj = Message()
             # sender is in list format, get first sender
             message_obj.sender = sender
             message_obj.chat = chat_obj 
             message_obj.text = data['message']
+            if 'image' in data:
+
+                # Generate a unique file name
+                chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+                random.seed = (os.urandom(1024))
+                filename = ''.join(random.choice(chars) for i in range(23))
+
+                # Save to message object
+                message_obj.image = base64_file(data=data['image'], name=filename)
             message_obj.save()
 
+            # Emit message to online users
+            for user in chat_obj.group.users.all():
+                async_to_sync(self.send_user_message)(user.username, message_obj, created_time)
 
-    async def send_user_message(self, username, sender_id, message, created_time, chat_room, chat_id):
+
+    async def send_user_message(self, username, message_obj, created_time):
 
         print(f"sending message to: {username}")
         await self.channel_layer.group_send(
             f"{username}",
             {
                 'type': 'user_message',
-                'message': message,
+                'message': message_obj.text,
                 'created': created_time,
-                'username': self.user_name,
-                'sender_id': sender_id,
-                'chat_room': chat_room,
-                'chat_id': chat_id,
+                'username': message_obj.sender.username,
+                'sender_id': message_obj.sender.id,
+                'chat_room': message_obj.chat.name,
+                'chat_id': message_obj.chat.id,
+                'image': message_obj.image.url if message_obj.image else None,
             }
         )
 
@@ -74,6 +87,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         chat_room = event['chat_room']
         chat_id = event['chat_id']
         sender_id = event['sender_id']
+        image = event['image']
 
         await self.send(text_data=json.dumps({
             'text': message,
@@ -85,5 +99,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             'chat': {
                 'name': chat_room,
                 'id': chat_id
-            }
+            },
+            'image': image
         }))
+
+
+# Convert the user inputted base64 text to object
+def base64_file(data, name=None):
+    _format, _img_str = data.split(';base64,')
+    _name, ext = _format.split('/')
+    if not name:
+        name = _name.split(":")[-1]
+    return ContentFile(base64.b64decode(_img_str), name='{}.{}'.format(name, ext))

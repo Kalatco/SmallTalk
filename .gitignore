@@ -11,6 +11,8 @@ web-build/
 *.sqlite3
 *.pyc
 *.log
+media/
+/q
 
 # macOS
 .DS_Store

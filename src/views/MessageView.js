@@ -40,7 +40,6 @@ class MessageView extends React.Component {
     this.state.websocket.onmessage = (e) => {
       // a message was received
       const data = JSON.parse(e.data);
-      console.log(data)
       if (this.props.selectedChatId == data.chat.id) {
         this.props.newMessage(data);
       }
@@ -75,7 +74,6 @@ class MessageView extends React.Component {
       this.state.websocket.onmessage = (e) => {
         // a message was received
         const data = JSON.parse(e.data);
-        console.log(data)
         if (this.props.selectedChatId == data.chat.id) {
           this.props.newMessage(data);
         }
