@@ -19,7 +19,7 @@ const Message = (props) => {
 
         {props.content.image && (
           <Image
-            source={{uri: '${props.server}${props.content.image}'}}
+            source={{uri: `${props.server}${props.content.image}`}}
             style={{width: 200, height: 200}}
             />
         )}

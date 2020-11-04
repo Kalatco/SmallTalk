@@ -34,7 +34,7 @@ class LessInfoAccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['username']
+        fields = ['username', 'id']
 
 
 class LessInfoChatSerializer(serializers.ModelSerializer):

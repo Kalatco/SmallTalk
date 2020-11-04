@@ -16,7 +16,7 @@ class MessageView extends React.Component {
 
     this.state = {
       enteredText: "",
-      enteredImage:"",
+      enteredImage: undefined,
       messageRef: undefined,
       webSocketStr: `${props.websocketServerName}/client/${props.user.username}/`,
       websocket: undefined,
@@ -42,7 +42,7 @@ class MessageView extends React.Component {
       const data = JSON.parse(e.data);
       console.log(data)
       if (this.props.selectedChatId == data.chat.id) {
-        //this.props.newMessage(data);
+        this.props.newMessage(data);
       }
     };
 
@@ -114,18 +114,19 @@ class MessageView extends React.Component {
 
   handleSendMessage = () => {
 
-    if(this.state.enteredText === '') return;
+    if(this.state.enteredText === '' && this.state.enteredImage === undefined) return;
     try {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
-        'image': 'data:image/png;base64,${this.state.enteredImage.base64}'
+        'image': (this.state.enteredImage) ? `data:image/jpeg;base64,${this.state.enteredImage.base64}` : undefined
       }));
       //console.log(this.props.user)
     } catch(error) {
       console.log(error)
     }
-    
+
+    this.state.enteredImage = undefined;
     this.state.messageRef.scrollToEnd({ animated: true });
     this.state.enteredText = "";
   };
@@ -142,10 +143,7 @@ class MessageView extends React.Component {
     console.log(result);
 
     if(!result.cancelled) {
-      this.setState({
-        enteredImage: result,
-      })
-      console.log(result.uri);
+      this.state.enteredImage = result;
     }
   }
 
@@ -170,8 +168,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}
-            server={this.props.serverName}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user} server={this.props.serverName}/>}
           />
         </View>
 
