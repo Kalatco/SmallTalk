@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, View, Button, Text, TouchableOpacity} from "react-native";
+import { StyleSheet, TextInput, View, Text, FlatList, Button} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
+import {Card, ListItem} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function SettingsView(props) {
 
@@ -12,34 +14,6 @@ function SettingsView(props) {
   const [confirmNewPasswordText, setConfirmNewPasswordText] = useState("");
   const [currentPasswordText, setCurrentPasswordText] = useState("");
   const [newGroupText, setNewGroupText] = useState("");
-
-  const handleUserNameInput = (enteredText) => {
-    setUserNameText(enteredText);
-  }
-
-  const handleFirstNameInput = (enteredText) => {
-    setFirstNameText(enteredText);
-  };
-
-  const handleLastNameInput = (enteredText) => {
-    setLastNameText(enteredText);
-  };
-
-  const handleNewPasswordInput = (enteredText) => {
-    setNewPasswordText(enteredText);
-  };
-
-  const handleConfirmNewPasswordInput = (enteredText) => {
-    setConfirmNewPasswordText(enteredText);
-  }
-
-  const handleCurrentPasswordInput = (enteredText) => {
-    setCurrentPasswordText(enteredText);
-  };
-
-  const handleNewGroupInput = (enteredText) => {
-    setNewGroupText(enteredText);
-  };
 
   const saveChanges = () => {
 
@@ -106,7 +80,7 @@ function SettingsView(props) {
         <TextInput 
           style={settingsStyles.textInputStyle} 
           placeholder={props.user.username}
-          onChangeText={handleUserNameInput}
+          onChangeText={(value) => setUserNameText(value) }
           value={userNameText}
         />
       </View>
@@ -115,7 +89,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>First Name:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder={props.user.first_name}
-          onChangeText={handleFirstNameInput}
+          onChangeText={(value) => setFirstNameText(value)}
           value={firstNameText}
         />
       </View>
@@ -124,7 +98,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Last Name:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder={props.user.last_name}
-          onChangeText={handleLastNameInput}
+          onChangeText={(value) => setLastNameText(value)}
           value={lastNameText}
         />
       </View>
@@ -133,7 +107,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Updated Password:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter New Password"
-          onChangeText={handleNewPasswordInput}
+          onChangeText={(value) => setNewPasswordText(value)}
           value={newPasswordText}
           secureTextEntry={true}
         />
@@ -143,7 +117,7 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>Confirm New Password:</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter New Password"
-          onChangeText={handleConfirmNewPasswordInput}
+          onChangeText={(value) => setConfirmNewPasswordText(value)}
           value={confirmNewPasswordText}
           secureTextEntry={true}
         />
@@ -154,37 +128,50 @@ function SettingsView(props) {
         <Text style={settingsStyles.textStyle}>(REQUIRED for Name/Password Changes)</Text>
         <TextInput style={settingsStyles.textInputStyle} 
           placeholder="Enter Current Password"
-          onChangeText={handleCurrentPasswordInput}
+          onChangeText={(value) => setCurrentPasswordText(value)}
           value={currentPasswordText}
           secureTextEntry={true}
         />
       </View>
       {/*START OF GROUPS VIEW*/}
-      <View style={settingsStyles.inputContainers}>
-        <Text style={settingsStyles.textStyle}>Current Groups:</Text>
-        {props.user.group_list.map((group, idx) => (
-          <View style={settingsStyles.groupContainer}
-            key={idx}>
-            <Text style={settingsStyles.groupTextStyle}>{group.name}</Text>
-            <TouchableOpacity style={settingsStyles.removeGroupOpacity}
-              onPress={removeGroup}
-            ><Text style={settingsStyles.removeGroupText}>Remove Group</Text></TouchableOpacity>
-          </View>
-        ))}
-        <Text style={settingsStyles.textStyle}>New Group:</Text>
-        <TextInput
-          style={settingsStyles.textInputStyle}
-          placeholder="Enter New Group"
-          onChangeText={handleNewGroupInput}
-          value={newGroupText}
-        />
-        <View style={settingsStyles.buttonContainer}>
-          <Button
-            color="gray"
-            title="Add New Group"
-            onPress={addNewGroup}
-          />
-        </View>
+      <View>
+        <FlatList
+          data={props.group_list}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Card key={item.id.toString()}>
+              <Text style={settingsStyles.cardTitle}>
+                {item.name}
+              </Text>
+              <Card.Divider/>
+              {item.users.map((item) => (
+                <ListItem
+                  key={item.username.toString()}
+                  bottomDivider
+                  onPress={() => changeChat(item.username)}>
+                  <ListItem.Content>
+                    <View style={settingsStyles.rowContainer}>
+                      <View style={settingsStyles.rowItem}>
+                        <Text>
+                          {item.username}
+                        </Text>
+                      </View>
+                      <View style={settingsStyles.rowItem}> 
+                        <Button title="delete" color="darkred"/>
+                      </View>
+                    </View>                  
+                  </ListItem.Content>
+                </ListItem>
+              ))}
+              <Card.Divider/>
+              <ListItem>
+                <ListItem.Content style={settingsStyles.addUserContainer}>
+                  <Button sytle={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+                </ListItem.Content>
+              </ListItem>
+            </Card>
+          )}
+        />       
       </View>
       {/*START OF SAVE BUTTON VIEW*/}
       <View style={settingsStyles.buttonContainer}>
@@ -210,6 +197,7 @@ function SettingsView(props) {
 function mapStateToProps(state) {
   return {
     user: state.user,
+    group_list: state.user.group_list,
   };
 }
 
@@ -232,30 +220,18 @@ export default connect(mapStateToProps, mapDispatchToProps)(SettingsView);
 const settingsStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor:'#e8ded2',
   },
   inputContainers: {
-    backgroundColor: "white",
+    backgroundColor:'#e8ded2',
     alignItems: "center",
     padding: 8,
   },
   buttonContainer: {
-    backgroundColor: "white",
+    backgroundColor:'#e8ded2',
     alignItems: "center",
+    alignSelf: "stretch",
     padding: 5,
-  },
-  groupContainer: {
-    flexDirection: 'row'
-  },
-  removeGroupOpacity: {
-    backgroundColor: 'gray',
-    width: 120,
-    borderWidth: 1,
-    borderColor: "white"
-  },
-  removeGroupText: {
-    color: "white",
-    textAlign: "center"
   },
   textStyle: {
     color: "black",
@@ -265,15 +241,16 @@ const settingsStyles = StyleSheet.create({
     backgroundColor: "gainsboro",
     color: "black",
     borderColor: "black",
-    width: 150,
+    alignSelf: "stretch",
     borderWidth: 1,
     textAlign: "center"
   },
   textInputStyle: {
     height: 30,
-    width: 200,
+    alignSelf: "stretch",
     borderColor: "gray",
     borderWidth: 1,
+    backgroundColor: "white",
   },
   flatListStyle: {
     backgroundColor: "gainsboro",
@@ -282,4 +259,28 @@ const settingsStyles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 2,
   },
+  cardTitle: {
+    fontSize: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rowContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  rowItem: {
+    width: "40%",
+    height: 40,
+  },
+  addUserContainer: {
+    width: 500,
+    alignItems: "center",
+    alignSelf: "stretch",
+  },
+  addUser: {
+    width: 500,
+    alignItems: "center",
+    alignSelf: "stretch",
+  },  
 });
