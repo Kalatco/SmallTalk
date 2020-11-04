@@ -3,16 +3,15 @@ from messenger.models import Group, Chat, Message, Account
 
 # --- ACCOUNT SERIALIZERS --- #
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
         model = Account
         fields = ['email', 'username', 'password', 'password2', 'first_name', 'last_name']
-        extra_kwargs = {
-            'password': { 'write_only': True }
-        }
-    
+        extra_kwargs = {'password': {'write_only': True}}
+
     def save(self):
         account = Account(
             email=self.validated_data['email'],
@@ -25,10 +24,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password2 = self.validated_data['password2']
 
         if password != password2:
-            raise serializers.ValidationError({ 'password': 'Passwords must match' })
+            raise serializers.ValidationError({'password': 'Passwords must match'})
         account.set_password(password)
         account.save()
         return account
+
 
 class LessInfoAccountSerializer(serializers.ModelSerializer):
 
@@ -36,11 +36,13 @@ class LessInfoAccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = ['username']
 
+
 class LessInfoChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
         fields = ['id', 'name']
+
 
 class GroupSerializer(serializers.ModelSerializer):
     users = LessInfoAccountSerializer(read_only=True, many=True)
@@ -55,11 +57,13 @@ class GroupSerializer(serializers.ModelSerializer):
         rep['admin'] = LessInfoAccountSerializer(instance.admin).data
         return rep
 
+
 class LessInfoGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ['id','name']
+        fields = ['id', 'name']
+
 
 class ChatSerializer(serializers.ModelSerializer):
     group = LessInfoGroupSerializer(read_only=True)
@@ -69,7 +73,6 @@ class ChatSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class MessageSerializer(serializers.ModelSerializer):
     chat = LessInfoChatSerializer(read_only=True)
     sender = LessInfoAccountSerializer(read_only=True)
@@ -77,6 +80,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = '__all__'
+
 
 class AccountSerializer(serializers.ModelSerializer):
     # list of groups a user belongs to
