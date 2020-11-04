@@ -6,6 +6,7 @@ admin.site.register(Group)
 admin.site.register(Chat)
 admin.site.register(Message)
 
+
 class AccountAdmin(UserAdmin):
     list_display = ('email', 'username', 'date_joined', 'last_login', 'is_admin', 'first_name', 'last_name')
     search_fields = ('email', 'username')
@@ -14,5 +15,6 @@ class AccountAdmin(UserAdmin):
     filter_horizontal = ()
     list_filter = ()
     fieldsets = ()
+
 
 admin.site.register(Account, AccountAdmin)

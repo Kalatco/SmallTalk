@@ -1,9 +1,12 @@
 import React from "react";
-import { FlatList, StyleSheet, TextInput, View, Button, Alert } from "react-native";
+import { FlatList, StyleSheet, TextInput, View } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
 import { connect } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
+
+
 
 //function MessageView(props) {
 class MessageView extends React.Component {
@@ -13,35 +16,101 @@ class MessageView extends React.Component {
 
     this.state = {
       enteredText: "",
+      enteredImage:"",
       messageRef: undefined,
-      websocket: new WebSocket(`${this.props.websocketServerName}/message/${props.user.username}/`),
+      webSocketStr: `${props.websocketServerName}/client/${props.user.username}/`,
+      websocket: undefined,
+      serverConnected: false,
+      updateUIKey: 1,
     }
   }
 
-  // Load data from server
+  // Load data from server on component load.
   async componentDidMount() {
+
+    this.state.websocket = new WebSocket(this.state.webSocketStr);
+
+    // Update UI with new server conneciton status
+    this.setState({ state: this.state });
+
+    this.state.websocket.onopen = (e) => {
+      this.state.serverConnected = true;
+    }
 
     this.state.websocket.onmessage = (e) => {
       // a message was received
       const data = JSON.parse(e.data);
       console.log(data)
       if (this.props.selectedChatId == data.chat.id) {
-        this.props.newMessage(data);
+        //this.props.newMessage(data);
       }
-    };
-
-    this.state.websocket.onerror = (e) => {
-      // an error occurred
-      console.log(e.message);
     };
 
     this.state.websocket.onclose = (e) => {
       // connection closed
-      console.log(e.code, e.reason);
-      Alert.alert("Connection closed")
+      this.state.serverConnected = false;
+      this.reconnectToServer();
     };
   }
 
+  // When socket connection is closed, update UI with status, and attempt to reconnect.
+  reconnectToServer() {
+    const self = this;
+
+    // Update UI with new server conneciton status
+    this.setState({ state: this.state });
+
+    // When the server is found again, reconnect websocket
+    const connect = () => {
+      this.state.websocket = new WebSocket(this.state.webSocketStr);
+      this.state.serverConnected = true;
+
+      // Update UI with new server conneciton status
+      this.setState({ state: this.state });
+      
+      this.state.websocket.onopen = (e) => {
+        this.state.serverConnected = true;
+      }
+
+      this.state.websocket.onmessage = (e) => {
+        // a message was received
+        const data = JSON.parse(e.data);
+        console.log(data)
+        if (this.props.selectedChatId == data.chat.id) {
+          this.props.newMessage(data);
+        }
+      };
+
+      this.state.websocket.onclose = (e) => {
+        // connection closed
+        this.state.serverConnected = false;
+        this.reconnectToServer();
+      };
+    }
+
+    // Attempt to talk to server until its reachable and connect websocket.
+    const findServer = setInterval(() => {
+
+      try {
+        Promise
+        .race([
+          fetch(`${self.props.serverName}/api/ping`),
+          new Promise((_, reject) => setTimeout(() => reject(), 1000))
+        ])
+        .then(() => {
+          console.log('server found');
+          connect();
+          clearInterval(findServer);
+        })
+        .catch(() => {
+          console.log('no server found');
+        });
+      } catch {
+        console.log('error in connection attempt');
+      }
+
+    }, 3000);
+  }
 
   handleSendMessage = () => {
 
@@ -50,7 +119,9 @@ class MessageView extends React.Component {
       this.state.websocket.send(JSON.stringify({
         'chat': this.props.selectedChatId,
         'message': this.state.enteredText,
+        'image': 'data:image/png;base64,${this.state.enteredImage.base64}'
       }));
+      //console.log(this.props.user)
     } catch(error) {
       console.log(error)
     }
@@ -59,9 +130,38 @@ class MessageView extends React.Component {
     this.state.enteredText = "";
   };
 
+  handleImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      base64: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
+
+    console.log(result);
+
+    if(!result.cancelled) {
+      this.setState({
+        enteredImage: result,
+      })
+      console.log(result.uri);
+    }
+  }
+
   render() {
     return (
       <View style={styles.screen}>
+
+        {/* Indicates if the client is connected to the server's websocket */}
+        <View
+          key={this.state.updateUIKey}
+          style={{
+            ...styles.serverStatus,
+            backgroundColor: `${(this.state.serverConnected) ? '#4BB543' : '#FF0000'}`
+          }}
+        />
+
         <View style={styles.messageContainer}>
           <FlatList
             ref={(ref) => this.state.messageRef = ref }
@@ -70,7 +170,8 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}/>}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}
+            server={this.props.serverName}/>}
           />
         </View>
 
@@ -85,6 +186,13 @@ class MessageView extends React.Component {
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
             />
+            <Icon
+              color="#5eaaa8"
+              name="image"
+              style={styles.sendButton}
+              size={40}
+              onPress={this.handleImage}
+             / >
             <Icon
               color="#5eaaa8"
               name="send"
@@ -129,6 +237,14 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor:'#e8ded2',
+  },
+  serverStatus: {
+    position: 'absolute',
+    right: 3,
+    top: 3,
+    borderRadius: 15,
+    height: 17,
+    width: 17,
   },
   messageContainer: {
     flex: 11,
