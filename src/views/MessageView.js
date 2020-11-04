@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 
 
+
 //function MessageView(props) {
 class MessageView extends React.Component {
 
@@ -120,6 +121,7 @@ class MessageView extends React.Component {
         'message': this.state.enteredText,
         'image': 'data:image/png;base64,${this.state.enteredImage.base64}'
       }));
+      //console.log(this.props.user)
     } catch(error) {
       console.log(error)
     }
@@ -168,7 +170,7 @@ class MessageView extends React.Component {
             }}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user.username}
+            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user}
             server={this.props.serverName}/>}
           />
         </View>

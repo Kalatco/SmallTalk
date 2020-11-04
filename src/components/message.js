@@ -6,13 +6,13 @@ const Message = (props) => {
   return (
     <View>
       <View style={
-        (props.content.sender.username === props.user) ?
+        (props.content.sender.id === props.user.id) ?
         styles.selfUserName : styles.otherUserName
       }>
         <Text>{props.content.sender.username}</Text>
       </View>
       <View style={
-          (props.content.sender.username === props.user) ?
+          (props.content.sender.id === props.user.id) ?
           styles.selfMessageStyle : styles.otherMessageStyle
       }>
         <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
@@ -24,7 +24,7 @@ const Message = (props) => {
             />
         )}
         <Text style={
-          (props.content.sender.username === props.user) ?
+          (props.content.sender.id === props.user.id) ?
           styles.selfTimeStamp : styles.otherTimeStamp
         }>
           {props.content.created}
