@@ -96,5 +96,6 @@ class Chat(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(Account, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    image = models.ImageField(upload_to='images')
     created = models.DateTimeField(auto_now_add=True)
     text = models.TextField(max_length=500)

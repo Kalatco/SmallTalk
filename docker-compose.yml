@@ -5,7 +5,8 @@ services:
   nginx:
     build: ./nginx
     volumes: 
-      - static_volume:/home/app/web/staticfiles
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
     ports:
       - 8080:80
     depends_on: 
@@ -20,7 +21,8 @@ services:
     build: .
     command: gunicorn smallTalk.wsgi:application --bind 0.0.0.0:8000
     volumes: 
-      - static_volume:/home/app/web/staticfiles
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
     env_file: 
       - ./.env
     depends_on: 
@@ -30,7 +32,8 @@ services:
     build: .
     command: gunicorn smallTalk.asgi:application -w 1 -k uvicorn.workers.UvicornWorker -b :9001
     volumes: 
-      - static_volume:/home/app/web/staticfiles
+      - static_volume:/usr/src/app/static
+      - media_volume:/usr/src/app/media
     env_file: 
       - ./.env
     depends_on: 
@@ -46,7 +49,10 @@ services:
       - POSTGRES_PASSWORD=Administrator
       - POSTGRES_DB=smallTalk_deploy
     command: -p 5433
+    ports:
+      - "5433:5433"
 
 volumes:
   postgres_data:
   static_volume:
+  media_volume:
