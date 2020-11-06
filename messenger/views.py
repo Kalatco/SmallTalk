@@ -107,45 +107,6 @@ def api_update_settings(request):
         if "last_name" in data:
             user.last_name = data["last_name"]
             # print("Last name Changed to " + user.last_name)
-        if "remove_groups" in data:
-            temp_serializer = AccountSerializer(user)
-            current_groups = temp_serializer.data["group_list"]
-
-            # Removes the user from the group
-            for rm_group_id in data["remove_groups"]:
-                for curr_group in current_groups:
-                    if rm_group_id == curr_group["id"]:
-                        group_obj = Group.objects.get(pk=rm_group_id)
-                        if group_obj:
-                            group_obj.users.remove(user)
-                            # print("Removed from the group: " + group_obj.name)
-        
-        if "add_group" in data:
-            try:
-                new_group = Group.objects.get(pk=data["add_group"])
-                new_group.users.add(user)
-                # print("Added to group: " + new_group.name)
-            except Group.DoesNotExist:
-                # print("Group does not exist")
-                return Response({"Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if "admin_remove" in data:
-            edit_group = Group.objects.get(pk=data["admin_remove"]["group_id"])
-            if (edit_group.admin==user):
-                all_users = edit_group.users.all()
-                print(all_users)
-                found_user = False
-                for curr_user in all_users:
-                    # print(str(curr_user.pk) + " : " + curr_user.username)
-                    if(curr_user.pk == data["admin_remove"]["user_id"]):
-                        edit_group.users.remove(curr_user)
-                        # print("User removed: " + curr_user.username)
-                        found_user = True
-                if found_user == False:
-                    print("Could not find user")
-            else:
-                # print("User is not admin in this group")
-                return Response({"User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user.save()
         except IntegrityError:
@@ -156,8 +117,56 @@ def api_update_settings(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
-# --- ACCOUNT ROUTES --- #
 
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_group_modify(request):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({'response': 'Invalid access permissions for this content'})
+
+    data = request.data
+    if "add_user" in data:
+        try:
+            new_user = Account.objects.get(id=data["add_user"]["user_id"])
+            group = Group.objects.get(pk=data["add_user"]["group_id"])
+            print("Added user " + new_user.username  + " to the group: " + group.name)
+        except Group.DoesNotExist:
+            # print("Group does not exist")
+            return Response({"Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        except Account.DoesNotExist:
+            # print ("User does not exist")
+            return Response({"User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        group.users.add(new_user)
+
+    if "remove_group" in data:
+        old_group = Group.objects.get(pk=data["remove_group"])
+        old_group.users.remove(user)
+        # print("Removed from group: " + old_group.name)
+
+    if "admin_remove" in data:
+        edit_group = Group.objects.get(pk=data["admin_remove"]["group_id"])
+        if (edit_group.admin==user):
+            all_users = edit_group.users.all()
+            print(all_users)
+            found_user = False
+            for curr_user in all_users:
+                # print(str(curr_user.pk) + " : " + curr_user.username)
+                if(curr_user.pk == data["admin_remove"]["user_id"]):
+                    edit_group.users.remove(curr_user)
+                    # print("User removed: " + curr_user.username)
+                    found_user = True
+            if found_user == False:
+                print("Could not find user")
+        else:
+            # print("User is not admin in this group")
+            return Response({"User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = AccountSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# --- ACCOUNT ROUTES --- #
 
 @api_view(['POST', ])
 @permission_classes([])

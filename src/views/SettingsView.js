@@ -163,7 +163,7 @@ function SettingsView(props) {
             <Card.Divider/>
             <ListItem>
               <ListItem.Content style={settingsStyles.addUserContainer}>
-                <Button sytle={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+                <Button style={settingsStyles.addUser} title="Add user" color="forestgreen"/>
               </ListItem.Content>
             </ListItem>
           </Card>
