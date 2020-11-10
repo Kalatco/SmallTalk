@@ -8,7 +8,7 @@ import {
 import { Input, Image } from 'react-native-elements';
 import { connect } from "react-redux";
 import axios from 'axios';
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TextInput, TouchableOpacity } from "react-native-gesture-handler";
 
 function SigninView(props) {
   const [emailText, setEmailText] = useState("");
@@ -21,6 +21,7 @@ function SigninView(props) {
   const [confirm_passwordReg, setconfirm_passwordReg] = useState("");
   const [first_nameReg, setfirst_nameReg] = useState("");
   const [last_nameReg, setlast_nameReg] = useState("");
+  const [isInvalidRegistration, setIsInvalidRegistration] = useState(false);
   
   const login = () => {
     console.log("***I AM HERE***");
@@ -111,11 +112,13 @@ function SigninView(props) {
       })
       .catch((res) => {
         console.log(res);
+        isInvalidLogin(true);
       })
   }
 
 
   return (
+    <ScrollView>
     <View style={styles.container}>
 
       <Image
@@ -167,7 +170,7 @@ function SigninView(props) {
           )}
       </View>
       </View>) : (
-        <View>
+        <View style={{ flex: 1, position: "relative" }}>
           <Text style={styles.inputStyle}>Email:</Text>
           <TextInput  
             placeholder="Email"
@@ -225,18 +228,19 @@ function SigninView(props) {
               </TouchableOpacity>
             </View>
             <View style={{ flex: 1, position: "relative" }}>
-        {isInvalidLogin && (
+        {isInvalidRegistration && (
             <View>
               <Text style={styles.invalidCredentials}>
-                User email or password is incorrect
+                Missing fields or invalid password
               </Text>
             </View>
           )}
       </View>
             
         </View>
-      )}
+      )}    
     </View>
+  </ScrollView>
   );
 }
 
@@ -286,7 +290,8 @@ const styles = StyleSheet.create({
     color: "black",
     fontWeight: "bold", 
     justifyContent: "center",
-    textAlign: "left"
+    textAlign: "left",
+    fontSize: 18,
   },
   loginButton: {
     borderRadius: 5,
