@@ -25,7 +25,6 @@ function SigninView(props) {
   const [InvalidRegistrationMessage, setInvalidRegistrationMessage] = useState("");
   
   const login = () => {
-    console.log("***I AM HERE***");
     let formData = new FormData();
     // (Django won't let me rename 'username' to 'email')
     formData.append('username', emailText);
@@ -34,7 +33,6 @@ function SigninView(props) {
     // Create request for user auth token
     axios.post(`${props.serverName}/login`, formData)
       .then(res => {
-        console.log("Reading from server");
         // Set the user token in store
         props.setAuthToken(res.data.token);
 
@@ -179,7 +177,7 @@ function SigninView(props) {
         {isInvalidLogin && (
             <View>
               <Text style={styles.invalidCredentials}>
-                {InvalidRegistrationMessage}
+                Invalid username or password
               </Text>
             </View>
           )}
@@ -248,7 +246,7 @@ function SigninView(props) {
         {isInvalidRegistration && (
             <View>
               <Text style={styles.invalidCredentials}>
-                Missing fields or invalid password
+                { InvalidRegistrationMessage }
               </Text>
             </View>
           )}
