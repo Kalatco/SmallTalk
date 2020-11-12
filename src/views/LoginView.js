@@ -22,6 +22,7 @@ function SigninView(props) {
   const [first_nameReg, setfirst_nameReg] = useState("");
   const [last_nameReg, setlast_nameReg] = useState("");
   const [isInvalidRegistration, setIsInvalidRegistration] = useState(false);
+  const [InvalidRegistrationMessage, setInvalidRegistrationMessage] = useState("");
   
   const login = () => {
     console.log("***I AM HERE***");
@@ -109,10 +110,24 @@ function SigninView(props) {
             })
             .catch((res) => console.log(res));
         }
+        else {
+          // Error occured in 200 response, display invalid fields to user
+          setIsInvalidRegistration(true);
+          let errorMessage = "Invalid: \n";
+          for (const [key, value] of Object.entries(res.data)) {
+
+            if (Array.isArray(value)) {
+              errorMessage += `${key.toString()}: ${value[0]}\n`
+            } else {
+              errorMessage += `${key.toString()}\n`
+            }
+          }
+          setInvalidRegistrationMessage(errorMessage);
+        }
       })
       .catch((res) => {
-        console.log(res);
-        isInvalidLogin(true);
+        setIsInvalidRegistration(true);
+        setInvalidRegistrationMessage("Server issue encountered");
       })
   }
 
@@ -164,7 +179,7 @@ function SigninView(props) {
         {isInvalidLogin && (
             <View>
               <Text style={styles.invalidCredentials}>
-                User email or password is incorrect
+                {InvalidRegistrationMessage}
               </Text>
             </View>
           )}
@@ -174,42 +189,44 @@ function SigninView(props) {
           <Text style={styles.inputStyle}>Email:</Text>
           <TextInput  
             placeholder="Email"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
             onChangeText={(input) => setEmailReg(input)}/> 
 
           <Text style={styles.inputStyle}>Username:</Text>
           <TextInput  
             placeholder="username"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
             onChangeText={(input) => setUsernameReg(input)}/>  
 
           <Text style={styles.inputStyle}>Password:</Text>
           <TextInput  
             placeholder="password"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
+            secureTextEntry={true}
             onChangeText={(input) => setPasswordReg(input)}/>  
 
           <Text style={styles.inputStyle}>Confirm password:</Text>
           <TextInput  
             placeholder="confirm_password"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
+            secureTextEntry={true}
             onChangeText={(input) => setconfirm_passwordReg(input)}/>
 
           <Text style={styles.inputStyle}>First name:</Text>
           <TextInput  
             placeholder="first_name"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
             onChangeText={(input) => setfirst_nameReg(input)}/>
 
           <Text style={styles.inputStyle}>Last name:</Text>
           <TextInput  
             placeholder="last_name"
-            style={styles.inputStyle}
+            style={styles.textInput}
             autoCorrect={false}
             onChangeText={(input) => setlast_nameReg(input)}/>
 
@@ -321,5 +338,12 @@ const styles = StyleSheet.create({
     height: 30,
     borderWidth: 1,
     textAlign: "center",
+  },
+  textInput: {
+    color: "black",
+    fontWeight: "bold", 
+    justifyContent: "center",
+    textAlign: "left",
+    fontSize: 14,
   },
 });
