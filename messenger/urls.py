@@ -17,7 +17,7 @@ urlpatterns = [
     path('ping', api_test_connection),
     path('user', api_detail_profile, name="user"),
     path('user/update', api_update_settings, name="update_user"),
-    path('groups/<int:group_id>/add/<int:user_id>', api_add_user, name="group_add"),
+    path('groups/<int:group_id>/add', api_add_user, name="group_add"),
     path('groups/<int:group_id>/leave', api_leave_group, name="group_leave"),
     path('groups/<int:group_id>/remove/<int:user_id>', api_admin_remove_user, name="group_admin_remove"),
     path('groups', api_all_groups, name="groups"),

@@ -14,11 +14,10 @@ function SettingsView(props) {
   const [newPasswordText, setNewPasswordText] = useState("");
   const [confirmNewPasswordText, setConfirmNewPasswordText] = useState("");
   const [currentPasswordText, setCurrentPasswordText] = useState("");
+  const [newUserText, setNewUserText] = useState("");
   const [newGroupText, setNewGroupText] = useState("");
 
   const saveChanges = () => {
-
-    // console.log("Saving Settings Changes!");
 
     let update_parameters = {}
 
@@ -55,26 +54,47 @@ function SettingsView(props) {
 
 
     let url = props.serverName+'/api/user/update'
-    // console.log(url)
-    // console.log(props.authenticationKey)
+
     axios.put(url, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
     })
+
+    axios.get(`${props.serverName}/api/user`, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+    .then(res => {
+      props.setUserState(res.data);
+    })
+    .catch((res) => console.log(res))
   };
+
+  const addUser = (group_id) => {
+    
+    let update_parameters = {}
+    update_parameters["new_user"] = newUserText
+
+    let url = props.serverName+'/api/groups/'
+    url = url + group_id + '/add'
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+  }
 
   const deleteUser = (group_id, user_id) => {
 
     let update_parameters = {}
-    // console.log("Group to be deleted from: " + group_id)
-    // console.log("User id to be deleted: " + user_id)
     
     let url = props.serverName+'/api/groups/'
     url = url + group_id + "/remove/" + user_id
-    // console.log(url)
 
-    axios.put(url, update_parameters , {
+    axios.put(url, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
@@ -190,7 +210,18 @@ function SettingsView(props) {
             <Card.Divider/>
             <ListItem>
               <ListItem.Content style={settingsStyles.addUserContainer}>
-                <Button style={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+                <View style={settingsStyles.rowContainer}>
+                  <View style={settingsStyles.rowItem}>
+                    <TextInput style={settingsStyles.textInputStyle}
+                      placeholder="Enter username"
+                      onChangeText={(value) => setNewUserText(value)}
+                      value={newUserText}
+                    />
+                  </View>
+                  <View style={settingsStyles.rowItem}>
+                    <Button style={settingsStyles.addUser} title="Add user" color="forestgreen" onPress={() => addUser(item1.id)}/>
+                  </View>
+                </View>
               </ListItem.Content>
             </ListItem>
           </Card>
@@ -237,6 +268,7 @@ function mapDispatchToProps(dispatch) {
     setPassword: (password) =>
       dispatch({ type: "SET_PASSWORD", value: password }),
     addGroup: (groupName) => dispatch({ type: "ADD_GROUP", value: groupName }),
+    setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data}),
   };
 }
 
@@ -297,11 +329,12 @@ const settingsStyles = StyleSheet.create({
   rowItem: {
     width: "40%",
     height: 40,
+    margin: 10
   },
   addUserContainer: {
     width: 500,
     alignItems: "center",
-    alignSelf: "stretch",
+    alignSelf: "stretch"
   },
   addUser: {
     width: 500,
