@@ -22,6 +22,7 @@ class MessageView extends React.Component {
       websocket: undefined,
       serverConnected: false,
       updateUIKey: 1,
+      height: 0,
     }
   }
 
@@ -119,7 +120,7 @@ class MessageView extends React.Component {
         'message': this.state.enteredText,
         'image': (this.state.enteredImage) ? `data:image/jpeg;base64,${this.state.enteredImage.base64}` : undefined
       }));
-      //console.log(this.props.user)
+      this.setState({ height: 0 });
     } catch(error) {
       console.log(error)
     }
@@ -176,10 +177,14 @@ class MessageView extends React.Component {
         >
           <View style={styles.textInputView}>
             <TextInput
-              style={styles.input}
               placeholder="Message"
+              multiline={true}
               onChangeText={(enteredText) => this.setState({enteredText})}
               value={this.state.enteredText}
+              onContentSizeChange={(event) => {
+                this.setState({ height: event.nativeEvent.contentSize.height })
+              }}
+              style={[styles.input, {height: Math.max(35, this.state.height)}]}
             />
             <Icon
               color="#5eaaa8"
@@ -187,7 +192,7 @@ class MessageView extends React.Component {
               style={styles.sendButton}
               size={40}
               onPress={this.handleImage}
-             / >
+             />
             <Icon
               color="#5eaaa8"
               name="send"
@@ -259,6 +264,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
     color:'#555555',
     backgroundColor: '#ffffff',
+    width: '75%',
   },
   sendButton: {
     minWidth: 45,
