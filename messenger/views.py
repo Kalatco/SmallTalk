@@ -193,6 +193,26 @@ def api_create_group(request):
     serializer = GroupSerializer(new_group)
     return Response(serializer.data, status=status.HTTP_200_OK)
         
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_add_chat(request, group_id):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({'response': 'Invalid access permissions for this content'})
+
+    data = request.data
+
+    edit_group = Group.objects.get(pk=group_id)
+
+    if "chat_name" in data and len(data["chat_name"]) > 0:
+        new_chat = Chat(name=data["chat_name"], group=edit_group)
+        new_chat.save()
+    else:
+        return Response({"No chat name entered"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GroupSerializer(edit_group)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # --- ACCOUNT ROUTES --- #
 

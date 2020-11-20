@@ -1,10 +1,28 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from "react-native";
 import { Header, Card, ListItem } from 'react-native-elements';
 import { connect } from "react-redux";
 import axios from 'axios';
 
 function ChatSelectionView(props) {
+
+
+  const [newChatText, setNewChatText] = useState("");
+
+  const createChat = (group_id) => {
+
+    let update_parameters = {}
+    update_parameters["chat_name"] = newChatText
+
+    let url = props.serverName+'/api/groups/'
+    url = url + group_id + '/addchat'
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+  };
 
   const changeChat = (chatId) => {
     axios.get(`${props.serverName}/api/messages/${chatId}`, {
@@ -56,7 +74,20 @@ function ChatSelectionView(props) {
                 </ListItem.Content>
               </ListItem>
             ))}
-
+            <View style={styles.newChatView}>
+              <TextInput style={styles.textInputStyle}
+                placeholder="Enter new chat name"
+                onChangeText={(value) => setNewChatText(value)}
+                value={newChatText}
+              />
+              <TouchableOpacity style={styles.newChatButton} onPress={() => createChat(item.id)}>
+                <View style={styles.newChatTextContainers}>
+                  <Text style={styles.newChatText}>
+                    Create Chat
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </Card>
         )}
       />
@@ -105,5 +136,31 @@ const styles = StyleSheet.create({
   },
   chat: {
     fontSize: 16,
-  }
+  },
+  newChatView: {
+    padding: 20,
+  },
+  newChatButton: {
+    backgroundColor: "forestgreen",
+    alignItems: "center",
+    height: 30, 
+    width: 150,
+  },
+  newChatText: {
+    color: "white",
+  },
+  newChatTextContainers: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    padding: 5
+  },
+  textInputStyle: {
+    height: 30,
+    width: 150,
+    alignSelf: "stretch",
+    borderColor: "gray",
+    borderWidth: 1,
+    backgroundColor: "white",
+  },
 });

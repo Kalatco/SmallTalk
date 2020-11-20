@@ -9,7 +9,8 @@ from messenger.views import (
     api_add_user,
     api_leave_group,
     api_admin_remove_user,
-    api_create_group
+    api_create_group,
+    api_add_chat
 )
 
 app_name = 'message'
@@ -23,6 +24,7 @@ urlpatterns = [
     path('groups/<int:group_id>/add', api_add_user, name="group_add"),
     path('groups/<int:group_id>/leave', api_leave_group, name="group_leave"),
     path('groups/<int:group_id>/remove/<int:user_id>', api_admin_remove_user, name="group_admin_remove"),
+    path('groups/<int:group_id>/addchat', api_add_chat, name="chat_add"),
     path('chats/<int:group_id>', api_detail_chat, name="chats"),
     path('messages/<int:chat_id>', api_detail_message, name="messages"),
 ]
