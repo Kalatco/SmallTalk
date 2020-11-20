@@ -120,7 +120,7 @@ class MessageView extends React.Component {
         'message': this.state.enteredText,
         'image': (this.state.enteredImage) ? `data:image/jpeg;base64,${this.state.enteredImage.base64}` : undefined
       }));
-      //console.log(this.props.user)
+      this.setState({ height: 0 });
     } catch(error) {
       console.log(error)
     }
@@ -192,7 +192,7 @@ class MessageView extends React.Component {
               style={styles.sendButton}
               size={40}
               onPress={this.handleImage}
-             / >
+             />
             <Icon
               color="#5eaaa8"
               name="send"
