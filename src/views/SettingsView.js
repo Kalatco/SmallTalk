@@ -4,6 +4,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { connect } from "react-redux";
 import {Card, ListItem} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios'
 
 function SettingsView(props) {
 
@@ -13,45 +14,91 @@ function SettingsView(props) {
   const [newPasswordText, setNewPasswordText] = useState("");
   const [confirmNewPasswordText, setConfirmNewPasswordText] = useState("");
   const [currentPasswordText, setCurrentPasswordText] = useState("");
+  const [newUserText, setNewUserText] = useState("");
   const [newGroupText, setNewGroupText] = useState("");
 
   const saveChanges = () => {
 
-    console.log("Saving Settings Changes!");
-    
+    let update_parameters = {}
+
     //No Changes will be accepted without the current password entry being correct.
-    if (props.user.password !== currentPasswordText) {
-      console.log("Incorrect current password given");
-      return;
-    }
-    else {
-      console.log("Correct current password authenticated");
+    if (currentPasswordText.length > 0) {
+      console.log("Current password provided: " + currentPasswordText);
+      update_parameters["old_password"] = currentPasswordText
     }
 
     if(userNameText.length > 0) {
-      props.setUsername(userNameText);
-      console.log("New username: "  + userNameText);
+      console.log("New username provided: "  + userNameText);
+      update_parameters["username"] = userNameText
     }
 
     if(firstNameText.length > 0) {
-      props.setFirstname(firstNameText);
-      console.log("New first name: "  + firstNameText);
+      console.log("New first name provided: "  + firstNameText);
+      update_parameters["first_name"] = firstNameText
     }
 
     if (lastNameText.length > 0) {
-      props.setLastname(lastNameText);
-      console.log("New last name: "  + lastNameText);
+      console.log("New last name provided: "  + lastNameText);
+      update_parameters["last_name"] = lastNameText
     }
 
-    if (newPasswordText.length > 0 && confirmNewPasswordText.length > 0) {
-      if (newPasswordText === confirmNewPasswordText) {
-        props.setPassword(newPasswordText);
-        console.log("New password: " + newPasswordText);
-      }
-      else {
-        console.log("New password and confirm new password DO NOT MATCH")
-      }
+    if (newPasswordText.length > 0) {
+      console.log("New password provided: "  + newPasswordText);
+      update_parameters["new_password"] = newPasswordText
     }
+
+    if (confirmNewPasswordText.length > 0) {
+      console.log("New confirm password provided: "  + confirmNewPasswordText);
+      update_parameters["new_password2"] = confirmNewPasswordText
+    }
+
+
+    let url = props.serverName+'/api/user/update'
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+
+    axios.get(`${props.serverName}/api/user`, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+    .then(res => {
+      props.setUserState(res.data);
+    })
+    .catch((res) => console.log(res))
+  };
+
+  const addUser = (group_id) => {
+    
+    let update_parameters = {}
+    update_parameters["new_user"] = newUserText
+
+    let url = props.serverName+'/api/groups/'
+    url = url + group_id + '/add'
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
+  }
+
+  const deleteUser = (group_id, user_id) => {
+
+    let update_parameters = {}
+    
+    let url = props.serverName+'/api/groups/'
+    url = url + group_id + "/remove/" + user_id
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
   };
 
   const cancelChanges = () => {
@@ -59,17 +106,18 @@ function SettingsView(props) {
     //ADD ABILITY TO EITHER REFRESH PAGE OR EXIT TO MESSAGEVIEW
   };
 
-  const addNewGroup = () => {
-    if(newGroupText.length > 0) {
-      console.log("Adding New Group!");
+  const createGroup = () => {
 
-      props.addGroup(newGroupText);
-      console.log("New group: " + newGroupText);
-    }
-  };
+    let update_parameters = {}
+    update_parameters["group_name"] = newGroupText
 
-  const removeGroup = () => {
-    console.log("Remove Group Button Pressed!");
+    let url = props.serverName+'/api/groups/create'
+
+    axios.put(url, update_parameters, {
+      headers: {
+        'Authorization': `Token ${props.authenticationKey}`
+      }
+    })
   };
 
   return (
@@ -135,26 +183,25 @@ function SettingsView(props) {
       </View>
       {/*START OF GROUPS VIEW*/}
       <View>
-        {props.group_list.map((item) => (
-          <Card key={item.id.toString()}>
+        {props.group_list.map((item1) => (
+          <Card key={item1.id.toString()}>
             <Text style={settingsStyles.cardTitle}>
-              {item.name}
+              {item1.name}
             </Text>
             <Card.Divider/>
-            {item.users.map((item) => (
+            {item1.users.map((item2) => (
               <ListItem
-                key={item.username.toString()}
-                bottomDivider
-                onPress={() => changeChat(item.username)}>
+                key={item2.username.toString()}
+                bottomDivider>
                 <ListItem.Content>
                   <View style={settingsStyles.rowContainer}>
                     <View style={settingsStyles.rowItem}>
                       <Text>
-                        {item.username}
+                        {item2.username}
                       </Text>
                     </View>
                     <View style={settingsStyles.rowItem}>
-                      <Button title="delete" color="darkred"/>
+                      <Button title="delete" color="darkred" onPress={() => deleteUser(item1.id, item2.id)}/>
                     </View>
                   </View>
                 </ListItem.Content>
@@ -163,11 +210,35 @@ function SettingsView(props) {
             <Card.Divider/>
             <ListItem>
               <ListItem.Content style={settingsStyles.addUserContainer}>
-                <Button sytle={settingsStyles.addUser} title="Add user" color="forestgreen"/>
+                <View style={settingsStyles.rowContainer}>
+                  <View style={settingsStyles.rowItem}>
+                    <TextInput style={settingsStyles.textInputStyle}
+                      placeholder="Enter username"
+                      onChangeText={(value) => setNewUserText(value)}
+                      value={newUserText}
+                    />
+                  </View>
+                  <View style={settingsStyles.rowItem}>
+                    <Button style={settingsStyles.addUser} title="Add user" color="forestgreen" onPress={() => addUser(item1.id)}/>
+                  </View>
+                </View>
               </ListItem.Content>
             </ListItem>
           </Card>
         ))}
+      </View>
+      {/*START OF ADD NEW GROUP VIEW*/}
+      <View style={settingsStyles.rowContainer}>
+        <View style={settingsStyles.rowItem}>
+          <TextInput style={settingsStyles.textInputStyle}
+            placeholder="Enter new group name"
+            onChangeText={(value) => setNewGroupText(value)}
+            value={newGroupText}
+          />
+        </View>
+        <View style={settingsStyles.rowItem}>
+          <Button style={settingsStyles.createGroup} title="Create Group" color="forestgreen" onPress={() => createGroup()}/>
+        </View>
       </View>
       {/*START OF SAVE BUTTON VIEW*/}
       <View style={settingsStyles.buttonContainer}>
@@ -194,6 +265,8 @@ function mapStateToProps(state) {
   return {
     user: state.user,
     group_list: state.user.group_list,
+    authenticationKey: state.authenticationKey,
+    serverName: state.serverName
   };
 }
 
@@ -208,6 +281,7 @@ function mapDispatchToProps(dispatch) {
     setPassword: (password) =>
       dispatch({ type: "SET_PASSWORD", value: password }),
     addGroup: (groupName) => dispatch({ type: "ADD_GROUP", value: groupName }),
+    setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data}),
   };
 }
 
@@ -266,17 +340,23 @@ const settingsStyles = StyleSheet.create({
     justifyContent: "space-between",
   },
   rowItem: {
-    width: "40%",
+    width: "45%",
     height: 40,
+    margin: 10
   },
   addUserContainer: {
     width: 500,
     alignItems: "center",
-    alignSelf: "stretch",
+    alignSelf: "stretch"
   },
   addUser: {
     width: 500,
     alignItems: "center",
     alignSelf: "stretch",
-  },  
+  },
+  createGroup: {
+    width: 250,
+    alignItems: "center",
+    alignSelf: "stretch",
+  }
 });
