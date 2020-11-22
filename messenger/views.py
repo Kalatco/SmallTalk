@@ -88,7 +88,7 @@ def api_update_settings(request):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
 
     data = request.data
     if "old_password" in data and user.check_password(data["old_password"]):
@@ -105,12 +105,12 @@ def api_update_settings(request):
         try:
             user.save()
         except IntegrityError:
-            return Response({"User with this username already exists. No Account changes made."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response":"User with this username already exists. No Account changes made."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = AccountSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response({"response":"No password or incorrect password entered."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT',])
 @permission_classes([IsAuthenticated,])
@@ -118,7 +118,7 @@ def api_add_user(request, group_id):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
     
     data = request.data
     try:
@@ -126,9 +126,9 @@ def api_add_user(request, group_id):
             new_user = Account.objects.get(username=data["new_user"])
         group = Group.objects.get(pk=group_id)
     except Group.DoesNotExist:
-        return Response({"Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     except Account.DoesNotExist:
-        return Response({"User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
     group.users.add(new_user)
 
     serializer = AccountSerializer(user)
@@ -141,7 +141,7 @@ def api_leave_group(request, group_id):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
 
     old_group = Group.objects.get(pk=group_id)
     old_group.users.remove(user)
@@ -155,7 +155,7 @@ def api_admin_remove_user(request, group_id, user_id):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
         
     edit_group = Group.objects.get(pk=group_id)
     if (edit_group.admin==user):
@@ -166,9 +166,9 @@ def api_admin_remove_user(request, group_id, user_id):
                 edit_group.users.remove(curr_user)
                 found_user = True
         if found_user == False:
-            return Response({"User is not in the group"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response": "User is not in the group"}, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return Response({"User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = AccountSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -179,7 +179,7 @@ def api_create_group(request):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
 
     data = request.data
 
@@ -188,7 +188,7 @@ def api_create_group(request):
         new_group.save()
         new_group.users.add(user)
     else:
-        return Response({"No group name entered"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "No group name entered"}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = GroupSerializer(new_group)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -199,7 +199,7 @@ def api_add_chat(request, group_id):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
 
     data = request.data
 
@@ -209,7 +209,7 @@ def api_add_chat(request, group_id):
         new_chat = Chat(name=data["chat_name"], group=edit_group)
         new_chat.save()
     else:
-        return Response({"No chat name entered"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"response": "No chat name entered"}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = GroupSerializer(edit_group)
     return Response(serializer.data, status=status.HTTP_200_OK)

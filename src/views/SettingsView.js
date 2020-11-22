@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, View, Text, FlatList, Button} from "react-native";
+import { StyleSheet, TextInput, View, Text, FlatList, Button, Alert} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
 import {Card, ListItem} from 'react-native-elements';
@@ -52,13 +52,19 @@ function SettingsView(props) {
       update_parameters["new_password2"] = confirmNewPasswordText
     }
 
-
-    let url = props.serverName+'/api/user/update'
-
-    axios.put(url, update_parameters, {
+    axios.put(`${props.serverName}/api/user/update`, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
+    })
+    .then(() => {
+      Alert.alert('Attention', 'Account Info Saved')
+      setCurrentPasswordText("")
+      setNewPasswordText("")
+      setConfirmNewPasswordText("")
+    })
+    .catch(error => {
+      Alert.alert("Save Failure", error.response.data.response)
     })
 
     axios.get(`${props.serverName}/api/user`, {
@@ -66,10 +72,6 @@ function SettingsView(props) {
         'Authorization': `Token ${props.authenticationKey}`
       }
     })
-    .then(res => {
-      props.setUserState(res.data);
-    })
-    .catch((res) => console.log(res))
   };
 
   const addUser = (group_id) => {
@@ -77,27 +79,34 @@ function SettingsView(props) {
     let update_parameters = {}
     update_parameters["new_user"] = newUserText
 
-    let url = props.serverName+'/api/groups/'
-    url = url + group_id + '/add'
-
-    axios.put(url, update_parameters, {
+    axios.put(`${props.serverName}/api/groups/${group_id}/add`, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
+    })
+    .then(() => {
+      Alert.alert('Attention', 'User Added: ' + newUserText)
+      setNewUserText("")
+    })
+    .catch(error => {
+      Alert.alert("Add user failed", error.response.data.response)
     })
   }
 
   const deleteUser = (group_id, user_id) => {
 
     let update_parameters = {}
-    
-    let url = props.serverName+'/api/groups/'
-    url = url + group_id + "/remove/" + user_id
 
-    axios.put(url, update_parameters, {
+    axios.put(`${props.serverName}/api/groups/${group_id}/remove/${user_id}`, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
+    })
+    .then(() => {
+      Alert.alert('Attention', 'User Deleted')
+    })
+    .catch(error => {
+      Alert.alert("Delete user failed", error.response.data.response)
     })
   };
 
@@ -113,10 +122,17 @@ function SettingsView(props) {
 
     let url = props.serverName+'/api/groups/create'
 
-    axios.put(url, update_parameters, {
+    axios.put(`${props.serverName}/api/groups/create`, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
+    })
+    .then(() => {
+      Alert.alert('Attention', 'Group Created: ' + newGroupText)
+      setNewGroupText("")
+    })
+    .catch(error => {
+      Alert.alert("Group Not Created", error.response.data.response)
     })
   };
 

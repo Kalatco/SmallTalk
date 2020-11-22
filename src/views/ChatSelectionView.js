@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Alert } from "react-native";
 import { Header, Card, ListItem } from 'react-native-elements';
 import { connect } from "react-redux";
 import axios from 'axios';
@@ -14,13 +14,17 @@ function ChatSelectionView(props) {
     let update_parameters = {}
     update_parameters["chat_name"] = newChatText
 
-    let url = props.serverName+'/api/groups/'
-    url = url + group_id + '/addchat'
-
-    axios.put(url, update_parameters, {
+    axios.put(`${props.serverName}/api/groups/${group_id}/addchat`, update_parameters, {
       headers: {
         'Authorization': `Token ${props.authenticationKey}`
       }
+    })
+    .then(() => {
+      Alert.alert('Attention', 'Chat Created')
+      setNewChatText("")
+    })
+    .catch(error => {
+      Alert.alert("Chat not Created", error.response.data.response)
     })
   };
 
