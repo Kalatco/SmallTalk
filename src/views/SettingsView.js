@@ -138,6 +138,11 @@ function SettingsView(props) {
 
   return (
     <KeyboardAwareScrollView style={settingsStyles.container}>
+      <Button
+        onPress={() => props.logout()}
+        title="Logout"
+        color="#b23b3b"
+      />
       {/*START OF USERNAME VIEW*/}
       <View style={settingsStyles.inputContainers}>
         <Text style={settingsStyles.textStyle}>Username:</Text>
@@ -290,14 +295,13 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     testCommand: () => dispatch({ type: "PING" }), // console.log("pong");
-    setUsername: (username) =>
-      dispatch({ type: "SET_USERNAME", value: username }),
+    setUsername: (username) => dispatch({ type: "SET_USERNAME", value: username }),
     setFirstname: (name) => dispatch({ type: "SET_FIRSTNAME", value: name }),
     setLastname: (name) => dispatch({ type: "SET_LASTNAME", value: name }),
-    setPassword: (password) =>
-      dispatch({ type: "SET_PASSWORD", value: password }),
+    setPassword: (password) => dispatch({ type: "SET_PASSWORD", value: password }),
     addGroup: (groupName) => dispatch({ type: "ADD_GROUP", value: groupName }),
     setUserState: (data) => dispatch({ type: 'SET_USER_STATE', value: data}),
+    logout: () => dispatch({ type: "LOG_OUT"}),
   };
 }
 
