@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, TextInput, View, Alert } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, View, Alert } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
@@ -168,7 +168,10 @@ class MessageView extends React.Component {
             ...styles.serverStatus,
             backgroundColor: `${(this.state.serverConnected) ? '#4BB543' : '#FF0000'}`
           }}
-        />
+        >
+          {this.state.serverConnected ? 
+          <Text>Online</Text> : <Text>Offline</Text>}
+        </View>
 
         <View style={styles.messageContainer}>
           <FlatList
@@ -251,11 +254,16 @@ const styles = StyleSheet.create({
   },
   serverStatus: {
     position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
     right: 3,
     top: 3,
     borderRadius: 15,
     height: 17,
-    width: 17,
+    width: 50,
+  },
+  serverStatusMessage: {
+    position: 'absolute',
   },
   messageContainer: {
     flex: 11,
