@@ -16,7 +16,7 @@ const initialState = {
   messageList: [],
 
   // AUTHENTICATION
-  authenticationKey: String,
+  authenticationKey: "",
   isSignedIn: false,
 };
 
@@ -147,6 +147,14 @@ const reducer = (state = initialState, action) => {
         };
       }
       break;
+    case 'LOG_OUT':
+      return {
+        ...state,
+        user: undefined,
+        isSignedIn: false,
+        authenticationKey: "",
+        messageList: [],
+      }
   }
   return state;
 };

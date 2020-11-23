@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, StyleSheet, TextInput, View, Alert } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
@@ -18,7 +18,7 @@ class MessageView extends React.Component {
       enteredText: "",
       enteredImage: undefined,
       messageRef: undefined,
-      webSocketStr: `${props.websocketServerName}/client/${props.user.username}/`,
+      webSocketStr: `${props.websocketServerName}/client?token=${props.authenticationKey}`,
       websocket: undefined,
       serverConnected: false,
       updateUIKey: 1,
@@ -47,10 +47,23 @@ class MessageView extends React.Component {
     };
 
     this.state.websocket.onclose = (e) => {
-      // connection closed
-      this.state.serverConnected = false;
-      this.reconnectToServer();
+
+      if (e.message && !e.message.includes('403 Access denied')) {
+        this.state.serverConnected = false;
+        this.reconnectToServer();
+      } else if (e.message && e.message.includes('403 Access denied')){
+        Alert.alert(
+          'Invalid account found',
+          'The provided user account is not authorized on the server, please login again'
+        );
+      }
     };
+  }
+
+  // Destroy websocket connection on page leave.
+  async componentWillUnmount() {
+    this.state.websocket.close();
+    this.state.serverConnected = false;
   }
 
   // When socket connection is closed, update UI with status, and attempt to reconnect.
@@ -139,8 +152,6 @@ class MessageView extends React.Component {
       quality: 1,
     })
 
-    console.log(result);
-
     if(!result.cancelled) {
       this.state.enteredImage = result;
     }
@@ -165,6 +176,7 @@ class MessageView extends React.Component {
             onContentSizeChange={() => {
               this.state.messageRef.scrollToEnd({ animated: true });
             }}
+            initialNumToRender={20}
             keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
             data={this.props.messageList}
             renderItem={(itemData) => <Message content={itemData.item} user={this.props.user} server={this.props.serverName}/>}
@@ -216,7 +228,6 @@ function mapStateToProps(state) {
     websocketServerName: state.websocketServerName,
     authenticationKey: state.authenticationKey,
     user: state.user,
-    messages: state.messages,
     isSignedin: state.isSignedin,
   };
 }

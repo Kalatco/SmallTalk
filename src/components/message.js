@@ -1,38 +1,42 @@
-import React from "react";
+import React, { PureComponent } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Image } from 'react-native-elements';
 
-const Message = (props) => {
-  return (
-    <View>
-      <View style={
-        (props.content.sender.id === props.user.id) ?
-        styles.selfUserName : styles.otherUserName
-      }>
-        <Text>{props.content.sender.username}</Text>
-      </View>
-      <View style={
-          (props.content.sender.id === props.user.id) ?
-          styles.selfMessageStyle : styles.otherMessageStyle
-      }>
-        <Text style={{ fontSize: 18 }}>{props.content.text}</Text>
+class Message extends PureComponent {
 
-        {props.content.image && (
-          <Image
-            source={{uri: `${props.server}${props.content.image}`}}
-            style={{width: 300, height: 300}}
-            />
-        )}
-        <Text style={
-          (props.content.sender.id === props.user.id) ?
-          styles.selfTimeStamp : styles.otherTimeStamp
+  render() {
+    return (
+      <View>
+        <View style={
+          (this.props.content.sender.id === this.props.user.id) ?
+          styles.selfUserName : styles.otherUserName
         }>
-          {props.content.created}
-        </Text>
+          <Text>{this.props.content.sender.username}</Text>
+        </View>
+        <View style={
+            (this.props.content.sender.id === this.props.user.id) ?
+            styles.selfMessageStyle : styles.otherMessageStyle
+        }>
+          <Text style={{ fontSize: 18 }}>{this.props.content.text}</Text>
+
+          {this.props.content.image && (
+            <Image
+              source={{uri: `${this.props.server}${this.props.content.image}`}}
+              style={{width: 300, height: 300}}
+              />
+          )}
+          <Text style={
+            (this.props.content.sender.id === this.props.user.id) ?
+            styles.selfTimeStamp : styles.otherTimeStamp
+          }>
+            {this.props.content.created}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    )
+  }
+}
+
 
 export default Message;
 

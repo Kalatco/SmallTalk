@@ -1,26 +1,13 @@
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-from channels.security.websocket import AllowedHostsOriginValidator
-# import messenger.routing
 from django.urls import re_path
-
+from .channelsMiddleware import TokenAuthMiddleware
 from messenger import consumers
 
-websocket_urlpatterns = [
-    re_path(r'ws/client/(?P<room_name>\w+)/$', consumers.ChatConsumer),
-]
 
 application = ProtocolTypeRouter({
-    # 'websocket': AuthMiddlewareStack(
-    #    URLRouter(
-    #        messenger.routing.websocket_urlpatterns
-    #    )
-    # )
-    'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter(
-                websocket_urlpatterns
-            )
-        )
-    )
+    'websocket': TokenAuthMiddleware(
+        URLRouter([
+            re_path(r'ws/client', consumers.ChatConsumer),
+        ])
+    ),
 })

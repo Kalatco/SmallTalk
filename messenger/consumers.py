@@ -9,32 +9,35 @@ from messenger.models import Message, Chat
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
+    room_group_name = None
 
     async def connect(self):
-        self.user_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = self.user_name
+        # Allow only authenticated users to connect
+        if self.scope['user']:
+            self.user_name = self.scope['user'].username
+            self.room_group_name = self.user_name
 
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
 
-        await self.accept()
+            await self.accept()
+        else:
+            await self.close()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        if self.room_group_name:
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
 
     @sync_to_async
     def receive(self, text_data):
         data = json.loads(text_data)
         chat_obj = Chat.objects.get(pk=data['chat'])
         sender = chat_obj.group.users.all().filter(username=self.user_name)
-
-        print(f"message recieved by {self.user_name}, msg: {data['message']}")
-
 
         if chat_obj and sender:
             sender = sender[0]
@@ -65,7 +68,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_user_message(self, username, message_obj, created_time):
 
-        print(f"sending message to: {username}")
         await self.channel_layer.group_send(
             f"{username}",
             {
