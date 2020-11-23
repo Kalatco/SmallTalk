@@ -88,76 +88,133 @@ def api_update_settings(request):
     # Verify user has access to this content
     user = request.user
     if not user:
-        return Response({'response': 'Invalid access permissions for this content'})
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
 
     data = request.data
     if "old_password" in data and user.check_password(data["old_password"]):
         if "new_password" in data and "new_password2" in data and data["new_password"]==data["new_password2"]:
             user.set_password(data["new_password"])
-            # print("Password was changed")
         elif "new_password" in data and "new_password2" in data:
-            # print(data["new_password"] + " and " + data["new_password2"] + " do not match")
             return Response({"message":"new passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
         if "username" in data and data["username"] != user.username:
             user.username = data["username"]
-            # print("Username Changed to " + user.username)
         if "first_name" in data:
             user.first_name = data["first_name"]
-            # print("First name Changed to " + user.first_name)
         if "last_name" in data:
             user.last_name = data["last_name"]
-            # print("Last name Changed to " + user.last_name)
-        if "remove_groups" in data:
-            temp_serializer = AccountSerializer(user)
-            current_groups = temp_serializer.data["group_list"]
-
-            # Removes the user from the group
-            for rm_group_id in data["remove_groups"]:
-                for curr_group in current_groups:
-                    if rm_group_id == curr_group["id"]:
-                        group_obj = Group.objects.get(pk=rm_group_id)
-                        if group_obj:
-                            group_obj.users.remove(user)
-                            # print("Removed from the group: " + group_obj.name)
-        
-        if "add_group" in data:
-            try:
-                new_group = Group.objects.get(pk=data["add_group"])
-                new_group.users.add(user)
-                # print("Added to group: " + new_group.name)
-            except Group.DoesNotExist:
-                # print("Group does not exist")
-                return Response({"Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
-
-        if "admin_remove" in data:
-            edit_group = Group.objects.get(pk=data["admin_remove"]["group_id"])
-            if (edit_group.admin==user):
-                all_users = edit_group.users.all()
-                print(all_users)
-                found_user = False
-                for curr_user in all_users:
-                    # print(str(curr_user.pk) + " : " + curr_user.username)
-                    if(curr_user.pk == data["admin_remove"]["user_id"]):
-                        edit_group.users.remove(curr_user)
-                        # print("User removed: " + curr_user.username)
-                        found_user = True
-                if found_user == False:
-                    print("Could not find user")
-            else:
-                # print("User is not admin in this group")
-                return Response({"User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             user.save()
         except IntegrityError:
-            # print("User with this username already exists: " + data["username"])
-            return Response({"User with this username already exists. No Account changes made."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response":"User with this username already exists. No Account changes made."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = AccountSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    return Response(status=status.HTTP_400_BAD_REQUEST)
-# --- ACCOUNT ROUTES --- #
+    return Response({"response":"No password or incorrect password entered."}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_add_user(request, group_id):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    data = request.data
+    try:
+        if("new_user") in data:
+            new_user = Account.objects.get(username=data["new_user"])
+        group = Group.objects.get(pk=group_id)
+    except Group.DoesNotExist:
+        return Response({"response": "Group does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+    except Account.DoesNotExist:
+        return Response({"response": "User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+    group.users.add(new_user)
+
+    serializer = AccountSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_leave_group(request, group_id):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
+
+    old_group = Group.objects.get(pk=group_id)
+    old_group.users.remove(user)
+    
+    serializer = AccountSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_admin_remove_user(request, group_id, user_id):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
+        
+    edit_group = Group.objects.get(pk=group_id)
+    if (edit_group.admin==user):
+        all_users = edit_group.users.all()
+        found_user = False
+        for curr_user in all_users:
+            if(curr_user.pk == user_id):
+                edit_group.users.remove(curr_user)
+                found_user = True
+        if found_user == False:
+            return Response({"response": "User is not in the group"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"response": "User is not admin in this group"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    serializer = AccountSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_create_group(request):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
+
+    data = request.data
+
+    if "group_name" in data and len(data["group_name"]) > 0:
+        new_group = Group(name=data["group_name"], admin=user)
+        new_group.save()
+        new_group.users.add(user)
+    else:
+        return Response({"response": "No group name entered"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GroupSerializer(new_group)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+        
+@api_view(['PUT',])
+@permission_classes([IsAuthenticated,])
+def api_add_chat(request, group_id):
+    # Verify user has access to this content
+    user = request.user
+    if not user:
+        return Response({"response": "Invalid access permissions for this content"}, status=status.HTTP_400_BAD_REQUEST)
+
+    data = request.data
+
+    edit_group = Group.objects.get(pk=group_id)
+
+    if "chat_name" in data and len(data["chat_name"]) > 0:
+        new_chat = Chat(name=data["chat_name"], group=edit_group)
+        new_chat.save()
+    else:
+        return Response({"response": "No chat name entered"}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = GroupSerializer(edit_group)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# --- ACCOUNT ROUTES --- #
 
 @api_view(['POST', ])
 @permission_classes([])
