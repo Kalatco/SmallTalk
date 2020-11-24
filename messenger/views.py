@@ -1,11 +1,14 @@
 import json
+import pytz
 
 from django.db import IntegrityError
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+
 
 from messenger.models import Group, Chat, Message, Account
 from messenger.serializers import (
@@ -63,6 +66,11 @@ def api_detail_chat(request, group_id):
         return_list.append(serializer.data)
     return Response(return_list)
 
+def convert_to_localtime(utctime):
+    fmt = "%b %d %Y %I:%M%p"
+    utc = utctime.replace(tzinfo=pytz.UTC)
+    localtz = utc.astimezone(timezone.get_current_timezone())
+    return localtz.strftime(fmt)
 
 @api_view(['GET', ])
 @permission_classes([IsAuthenticated, ])
@@ -74,8 +82,7 @@ def api_detail_message(request, chat_id):
 
     return_list = []
     for message in messages:
-
-        created_str = message.created.strftime("%b %d %Y %I:%M%p")
+        created_str = convert_to_localtime(message.created)
         serializer = MessageSerializer(message)
         data = serializer.data
         data['created'] = created_str
