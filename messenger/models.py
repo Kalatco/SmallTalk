@@ -55,6 +55,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    selected_chat = models.ForeignKey('Chat', blank=True, null=True, on_delete=models.SET_NULL)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
@@ -96,6 +97,6 @@ class Chat(models.Model):
 class Message(models.Model):
     sender = models.ForeignKey(Account, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
-    image = models.ImageField(upload_to='images')
+    image = models.ImageField(upload_to='images', blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    text = models.TextField(max_length=500)
+    text = models.TextField(max_length=500, blank=True)

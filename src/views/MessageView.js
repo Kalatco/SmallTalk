@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, Text, TextInput, View, Alert } from "react-native";
+import { FlatList, StyleSheet, TextInput, View, Alert, Text } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
@@ -41,7 +41,7 @@ class MessageView extends React.Component {
     this.state.websocket.onmessage = (e) => {
       // a message was received
       const data = JSON.parse(e.data);
-      if (this.props.selectedChatId == data.chat.id) {
+      if (this.props.user.selected_chat === data.chat.id) {
         this.props.newMessage(data);
       }
     };
@@ -88,7 +88,7 @@ class MessageView extends React.Component {
       this.state.websocket.onmessage = (e) => {
         // a message was received
         const data = JSON.parse(e.data);
-        if (this.props.selectedChatId == data.chat.id) {
+        if (this.props.user.selected_chat === data.chat.id) {
           this.props.newMessage(data);
         }
       };
@@ -129,7 +129,7 @@ class MessageView extends React.Component {
     if(this.state.enteredText === '' && this.state.enteredImage === undefined) return;
     try {
       this.state.websocket.send(JSON.stringify({
-        'chat': this.props.selectedChatId,
+        'chat': this.props.user.selected_chat,
         'message': this.state.enteredText,
         'image': (this.state.enteredImage) ? `data:image/jpeg;base64,${this.state.enteredImage.base64}` : undefined
       }));
@@ -160,63 +160,75 @@ class MessageView extends React.Component {
   render() {
     return (
       <View style={styles.screen}>
-
-        {/* Indicates if the client is connected to the server's websocket */}
-        <View
-          key={this.state.updateUIKey}
-          style={{
-            ...styles.serverStatus,
-            backgroundColor: `${(this.state.serverConnected) ? '#4BB543' : '#FF0000'}`
-          }}
-        >
-          {this.state.serverConnected ? 
-          <Text>Online</Text> : <Text>Offline</Text>}
-        </View>
-
-        <View style={styles.messageContainer}>
-          <FlatList
-            ref={(ref) => this.state.messageRef = ref }
-            onContentSizeChange={() => {
-              this.state.messageRef.scrollToEnd({ animated: true });
-            }}
-            initialNumToRender={20}
-            keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
-            data={this.props.messageList}
-            renderItem={(itemData) => <Message content={itemData.item} user={this.props.user} server={this.props.serverName}/>}
-          />
-        </View>
-
-        <KeyboardAccessoryView
-          androidAdjustResize
-          alwaysVisible={true}
-        >
-          <View style={styles.textInputView}>
-            <TextInput
-              placeholder="Message"
-              multiline={true}
-              onChangeText={(enteredText) => this.setState({enteredText})}
-              value={this.state.enteredText}
-              onContentSizeChange={(event) => {
-                this.setState({ height: event.nativeEvent.contentSize.height })
-              }}
-              style={[styles.input, {height: Math.max(35, this.state.height)}]}
-            />
+        {this.props.user.selected_chat === null ? (
+          <View style={styles.chooseChatContainer}>
+            <Text style={styles.chooseChat}>
+              Select a chat from the left side menu
+            </Text>
             <Icon
-              color="#5eaaa8"
-              name="image"
-              style={styles.sendButton}
+              name="alert-triangle"
               size={40}
-              onPress={this.handleImage}
-             />
-            <Icon
-              color="#5eaaa8"
-              name="send"
-              style={styles.sendButton}
-              size={40}
-              onPress={this.handleSendMessage}
             />
           </View>
-        </KeyboardAccessoryView>
+        ) : (
+          <View style={styles.screen}>
+            {/* Indicates if the client is connected to the server's websocket */}
+            <View
+              key={this.state.updateUIKey}
+              style={{
+                ...styles.serverStatus,
+                backgroundColor: `${(this.state.serverConnected) ? '#4BB543' : '#FF0000'}`
+              }}
+            >
+              {this.state.serverConnected ? 
+                <Text>Online</Text> : <Text>Offline</Text>}
+            </View>
+
+            <View style={styles.messageContainer}>
+              <FlatList
+                ref={(ref) => this.state.messageRef = ref }
+                onContentSizeChange={() => {
+                  this.state.messageRef.scrollToEnd({ animated: true });
+                }}
+                keyExtractor={(item, index) => `item: ${item}, index: ${index}`}
+                data={this.props.messageList}
+                renderItem={(itemData) => <Message content={itemData.item} user={this.props.user} server={this.props.serverName}/>}
+              />
+            </View>
+
+            <KeyboardAccessoryView
+              androidAdjustResize
+              alwaysVisible={true}
+            >
+              <View style={styles.textInputView}>
+                <TextInput
+                  placeholder="Message"
+                  multiline={true}
+                  onChangeText={(enteredText) => this.setState({enteredText})}
+                  value={this.state.enteredText}
+                  onContentSizeChange={(event) => {
+                    this.setState({ height: event.nativeEvent.contentSize.height })
+                  }}
+                  style={[styles.input, {height: Math.max(35, this.state.height)}]}
+                />
+                <Icon
+                  color="#5eaaa8"
+                  name="image"
+                  style={styles.sendButton}
+                  size={40}
+                  onPress={this.handleImage}
+                />
+                <Icon
+                  color="#5eaaa8"
+                  name="send"
+                  style={styles.sendButton}
+                  size={40}
+                  onPress={this.handleSendMessage}
+                />
+              </View>
+            </KeyboardAccessoryView>
+          </View>
+        )}
       </View>
     );
   }
@@ -225,7 +237,6 @@ class MessageView extends React.Component {
 // Getters: props.messageList
 function mapStateToProps(state) {
   return {
-    selectedChatId: state.selectedChatId,
     messageList: state.messageList,
     serverName: state.serverName,
     websocketServerName: state.websocketServerName,
@@ -248,6 +259,17 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(MessageView);
 
 const styles = StyleSheet.create({
+  chooseChatContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  chooseChat: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginTop: 200,
+    width: 200,
+  },
   screen: {
     flex: 1,
     backgroundColor:'#e8ded2',

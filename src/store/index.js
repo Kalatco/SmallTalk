@@ -12,7 +12,6 @@ const initialState = {
 
   // USER
   user: undefined,
-  selectedChatId: 2,
   messageList: [],
 
   // AUTHENTICATION
@@ -117,7 +116,10 @@ const reducer = (state = initialState, action) => {
         if(action.value) {
           return {
             ...state,
-            selectedChatId: action.value,
+            user: {
+              ...state.user,
+              selected_chat: action.value,
+            }
           };
         }
     case 'NEW_MESSAGE':

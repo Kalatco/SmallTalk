@@ -89,4 +89,4 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = '__all__'
-        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'group_list']
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'group_list', 'selected_chat']

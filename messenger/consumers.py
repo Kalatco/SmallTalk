@@ -44,6 +44,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             datetimeObj = datetime.now()
             created_time = datetimeObj.strftime("%b %d %Y %I:%M%p")
 
+            # set last chat used by user.
+            sender.selected_chat = chat_obj
+            sender.save()
+
             # Save message to database
             message_obj = Message()
             # sender is in list format, get first sender
