@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Alert } from "react-native";
 import { Header, Card, ListItem } from 'react-native-elements';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
 import axios from 'axios';
 
@@ -41,10 +42,8 @@ function ChatSelectionView(props) {
       .catch((res) => console.log(res));
   };
 
-  //style={{ (setSelectedChat == item.id.toString()) : }}
-
   return (
-    <View>
+    <KeyboardAwareScrollView style={{ flex: 1 }}>
       <Header
         centerComponent={{
           text: 'Chat Selection',
@@ -54,49 +53,43 @@ function ChatSelectionView(props) {
           }
         }}
       />
+      {props.group_list.map((item) => (
+        <Card key={item.id.toString()}>
+          <Text style={styles.cardTitle}>
+            {item.name}
+          </Text>
+          <Card.Divider/>
 
-      <FlatList
-        data={props.group_list}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Card key={item.id.toString()}>
-            <Text style={styles.cardTitle}>
-              {item.name}
-            </Text>
-            <Card.Divider/>
-
-            {item.chat_list.map((item) => (
-              <ListItem
-                key={item.id.toString()}
-                bottomDivider
-                containerStyle={(props.selectedChatId.toString() === item.id.toString()) ? styles.selectedCard : styles.regularCard}
-                onPress={() => changeChat(item.id)}>
-                <ListItem.Content>
-                  <ListItem.Title>
-                    {item.name}
-                  </ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
-            ))}
-            <View style={styles.newChatView}>
-              <TextInput style={styles.textInputStyle}
-                placeholder="Enter new chat name"
-                onChangeText={(value) => setNewChatText(value)}
-                value={newChatText}
-              />
-              <TouchableOpacity style={styles.newChatButton} onPress={() => createChat(item.id)}>
-                <View style={styles.newChatTextContainers}>
-                  <Text style={styles.newChatText}>
-                    Create Chat
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </Card>
-        )}
-      />
-
-    </View>
+          {item.chat_list.map((item) => (
+            <ListItem
+              key={item.id.toString()}
+              bottomDivider
+              containerStyle={(props.user.selected_chat === item.id) ? styles.selectedCard : styles.regularCard}
+              onPress={() => changeChat(item.id)}>
+              <ListItem.Content>
+                <ListItem.Title>
+                  {item.name}
+                </ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))}
+          <View style={styles.newChatView}>
+            <TextInput style={styles.textInputStyle}
+              placeholder="Enter new chat name"
+              onChangeText={(value) => setNewChatText(value)}
+              value={newChatText}
+            />
+            <TouchableOpacity style={styles.newChatButton} onPress={() => createChat(item.id)}>
+              <View style={styles.newChatTextContainers}>
+                <Text style={styles.newChatText}>
+                  Create Chat
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </Card>
+      ))}
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -106,7 +99,7 @@ function mapStateToProps(state) {
     serverName: state.serverName,
     authenticationKey: state.authenticationKey,
     group_list: state.user.group_list,
-    selectedChatId: state.selectedChatId,
+    user: state.user,
   };
 }
 

@@ -36,7 +36,6 @@ function mapStateToProps(state) {
     user: state.user,
     serverName: state.serverName,
     authenticationKey: state.authenticationKey,
-    selectedChatId: state.selectedChatId,
   };
 }
 
