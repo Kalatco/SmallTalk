@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, StyleSheet, TextInput, View, Alert, Text } from "react-native";
+import { FlatList, StyleSheet, TextInput, View, Alert, Text, Image } from "react-native";
 import { KeyboardAccessoryView } from 'react-native-keyboard-accessory'
 import Icon from 'react-native-vector-icons/Feather';
 import Message from "./../components/message";
@@ -154,7 +154,13 @@ class MessageView extends React.Component {
 
     if(!result.cancelled) {
       this.state.enteredImage = result;
+      this.setState({ state: this.state});
     }
+  }
+
+  deleteImage = () => {
+    this.state.enteredImage = undefined;
+    this.setState({ state: this.state})
   }
 
   render() {
@@ -229,6 +235,28 @@ class MessageView extends React.Component {
             </KeyboardAccessoryView>
           </View>
         )}
+          {this.state.enteredImage && (
+                <View 
+                  style={{
+                    height: 300,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#e8ded2'
+                }}
+                >
+                  <Icon
+                  color="#5eaaa8"
+                  name="delete"
+                  style={styles.exitButton}
+                  size={40}
+                  onPress={this.deleteImage}
+                  />
+                  <Image
+                    source={{uri: this.state.enteredImage.uri}}
+                    style={{width: 300, height: 300}}
+                  />
+                </View>
+            )}
       </View>
     );
   }
@@ -312,4 +340,12 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     padding: 3,
   },
+  exitButton: {
+    minWidth: 45,
+    flexShrink: 1, 
+    padding: 3,
+    position: 'absolute',
+    right: 3,
+    top: 3,
+  }
 });
