@@ -60,9 +60,10 @@ class SettingsView extends React.Component {
     })
     .then(() => {
       Alert.alert('Attention', 'Account Info Saved')
-      this.currentPasswordText = ""
-      this.newPasswordText = ""
-      this.confirmPasswordText = ""
+      this.state.currentPasswordText = ""
+      this.state.newPasswordText = ""
+      this.state.confirmPasswordText = ""
+      this.state.textInputRef.clear();
 
       axios.get(`${this.props.serverName}/api/user`, {
         headers: {
@@ -91,7 +92,7 @@ class SettingsView extends React.Component {
     })
     .then(() => {
       Alert.alert('Attention', 'User Added: ' + this.state.newUserText)
-      this.newUserText = ""
+      this.state.newUserText = ""
       this.state.textInputRef.clear();
 
       axios.get(`${this.props.serverName}/api/user`, {
@@ -161,7 +162,8 @@ class SettingsView extends React.Component {
     })
     .then(() => {
       Alert.alert('Attention', 'Group Created: ' + this.state.newGroupText)
-      this.newGroupText = ""
+      this.state.newGroupText = ""
+      this.state.textInputRef.clear();
 
       axios.get(`${this.props.serverName}/api/user`, {
         headers: {
@@ -219,6 +221,7 @@ class SettingsView extends React.Component {
           <Text style={settingsStyles.textStyle}>Updated Password:</Text>
           <TextInput style={settingsStyles.textInputStyle} 
             placeholder="Enter New Password"
+            ref={(reference) => this.state.textInputRef = reference}
             onChangeText={(value) => this.state.newPasswordText = value}
             value={this.newPasswordText}
             secureTextEntry={true}
@@ -229,6 +232,7 @@ class SettingsView extends React.Component {
           <Text style={settingsStyles.textStyle}>Confirm New Password:</Text>
           <TextInput style={settingsStyles.textInputStyle} 
             placeholder="Enter New Password"
+            ref={(reference) => this.state.textInputRef = reference}
             onChangeText={(value) => this.state.confirmPasswordText = value}
             value={this.confirmNewPasswordText}
             secureTextEntry={true}
@@ -240,6 +244,7 @@ class SettingsView extends React.Component {
           <Text style={settingsStyles.textStyle}>(REQUIRED for Name/Password Changes)</Text>
           <TextInput style={settingsStyles.textInputStyle} 
             placeholder="Enter Current Password"
+            ref={(reference) => this.state.textInputRef = reference}
             onChangeText={(value) => this.state.currentPasswordText = value}
             value={this.currentPasswordText}
             secureTextEntry={true}
@@ -297,6 +302,7 @@ class SettingsView extends React.Component {
           <View style={settingsStyles.rowItem}>
             <TextInput style={settingsStyles.textInputStyle}
               placeholder="Enter new group name"
+              ref={(reference) => this.state.textInputRef = reference}
               onChangeText={(value) => this.state.newGroupText = value}
               value={this.newGroupText}
             />
