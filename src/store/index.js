@@ -12,11 +12,10 @@ const initialState = {
 
   // USER
   user: undefined,
-  selectedChatId: 2,
   messageList: [],
 
   // AUTHENTICATION
-  authenticationKey: String,
+  authenticationKey: "",
   isSignedIn: false,
 };
 
@@ -117,7 +116,10 @@ const reducer = (state = initialState, action) => {
         if(action.value) {
           return {
             ...state,
-            selectedChatId: action.value,
+            user: {
+              ...state.user,
+              selected_chat: action.value,
+            }
           };
         }
     case 'NEW_MESSAGE':
@@ -147,6 +149,14 @@ const reducer = (state = initialState, action) => {
         };
       }
       break;
+    case 'LOG_OUT':
+      return {
+        ...state,
+        user: undefined,
+        isSignedIn: false,
+        authenticationKey: "",
+        messageList: [],
+      }
   }
   return state;
 };

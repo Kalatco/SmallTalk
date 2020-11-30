@@ -39,7 +39,7 @@ function Login(props) {
                   // Save user data in store
                   props.setUserState(res.data);
     
-                  axios.get(`${props.serverName}/api/messages/${props.selectedChatId}`, {
+                  axios.get(`${props.serverName}/api/messages/${res.data.selected_chat}`, {
                     headers: {
                       'Authorization': `Token ${authKey}`
                     }
@@ -113,7 +113,6 @@ function mapStateToProps(state) {
       user: state.user,
       serverName: state.serverName,
       authenticationKey: state.authenticationKey,
-      selectedChatId: state.selectedChatId,
     };
   }
   

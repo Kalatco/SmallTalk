@@ -34,7 +34,7 @@ function Register(props) {
             // Once the auth token is received, access user data
             if (res.data.token) {
               const authKey = res.data.token;
-              axios.get(`${props.serverName}/messenger/user`, {
+              axios.get(`${props.serverName}/api/user`, {
                 headers: {
                   'Authorization': `Token ${authKey}`
                 }
@@ -43,7 +43,7 @@ function Register(props) {
                   // Save user data in store
                   props.setUserState(res.data);
     
-                  axios.get(`${props.serverName}/messenger/messages/${props.selectedChatId}`, {
+                  axios.get(`${props.serverName}/api/messages/${res.data.selected_chat}`, {
                     headers: {
                       'Authorization': `Token ${authKey}`
                     }
@@ -157,7 +157,6 @@ function mapStateToProps(state) {
       user: state.user,
       serverName: state.serverName,
       authenticationKey: state.authenticationKey,
-      selectedChatId: state.selectedChatId,
     };
   }
   
