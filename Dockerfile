@@ -1,25 +1,19 @@
 FROM python:3.8.3-slim-buster
 
 # set working directory
-ENV HOME=/usr/src/app
-RUN mkdir $HOME
-RUN mkdir $HOME/static
-RUN mkdir $HOME/media
-WORKDIR $HOME
+WORKDIR /app
+RUN mkdir static/ && mkdir media/
 
 # set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install system dependencies
-RUN apt-get update \
-  && apt-get -y install netcat gcc \
-  && apt-get clean
+RUN apt-get update && \
+  apt-get -y install netcat gcc
+
+# copy all files
+COPY . .
 
 # install python dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt .
 RUN pip install -r requirements.txt
-
-# add app
-COPY . .
