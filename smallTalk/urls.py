@@ -7,6 +7,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from messenger.views import registration_view
 
 urlpatterns = [
+    path('', include("django_prometheus.urls")),
     path('api/', include('messenger.urls', 'messenger_api')),
     path('admin/', admin.site.urls),
     path('register', registration_view, name="register"),

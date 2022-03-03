@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-
+from django_prometheus.models import ExportModelOperationsMixin
 
 # --- ACCOUNT MODEL --- #
 
@@ -81,20 +81,20 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 # --- MESSAGING MODELS --- #
 
 
-class Group(models.Model):
+class Group(ExportModelOperationsMixin('group'), models.Model):
     admin = models.ForeignKey(Account, on_delete=models.CASCADE)
     users = models.ManyToManyField(Account, related_name='group_list')
     name = models.TextField(max_length=25)
     created = models.DateTimeField(auto_now_add=True)
 
 
-class Chat(models.Model):
+class Chat(ExportModelOperationsMixin('chat'), models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='chat_list')
     name = models.TextField(max_length=25)
     created = models.DateTimeField(auto_now_add=True)
 
 
-class Message(models.Model):
+class Message(ExportModelOperationsMixin('message'), models.Model):
     sender = models.ForeignKey(Account, on_delete=models.CASCADE)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
     image = models.ImageField(upload_to='images', blank=True)
