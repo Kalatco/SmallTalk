@@ -20,6 +20,8 @@
 
 Prepare database
 
+(must install postrgesql onto your computer)
+
 4. Type `pip3 install -r requirements.txt` to get the dependencies
 5. Type `python3 manage.py migrate` to create the sqlite3 database and add all the tables
 6. Type `python3 manage.py loaddata data.json` to populate the tables
@@ -28,7 +30,7 @@ Prepare database
 
 Prepare server
 
-7. Type `python manage.py runserver 0.0.0.0:8080`
+7. Type `python3 manage.py runserver 0.0.0.0:8080`
 8. Navigate to your web browser and go to {IPv4 address}:8080/admin for the admin console.
 
 ## Run the Server on Docker
