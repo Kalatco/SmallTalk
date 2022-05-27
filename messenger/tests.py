@@ -111,7 +111,7 @@ class MessengerTestCase(TestCase):
             })
 
         self.account_one.refresh_from_db()
-        self.assertEqual(self.account_one.first_name, new_firstname)
+        self.assertEqual(self.account_one.first_name, "wrong assert value")
         self.assertEqual(self.account_one.last_name, new_lastname)
         self.assertTrue(self.account_one.check_password(new_password))
 
