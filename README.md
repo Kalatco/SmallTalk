@@ -3,9 +3,9 @@
 - Our primary customers are business professionals working on teams
 - Making online messaging easier for groups working together on team projects
 
-![Image of login page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/loginScreenshot.png)
-![Image of messages page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/messagesScreenshot.png)
-![Image of navigator page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/navigatorScreenshot.png)
+![Image of login page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/loginScreenshot.png =200x400)
+![Image of messages page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/messagesScreenshot.png =200x400)
+![Image of navigator page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/navigatorScreenshot.png =200x400)
 
 ## Run mobile app for development
 
