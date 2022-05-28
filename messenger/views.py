@@ -1,5 +1,4 @@
 import json
-import pytz
 
 from django.db import IntegrityError
 from django.utils import timezone
@@ -67,10 +66,8 @@ def api_detail_chat(request, group_id):
     return Response(return_list)
 
 def convert_to_localtime(utctime):
-    fmt = "%b %d %Y %I:%M%p"
-    utc = utctime.replace(tzinfo=pytz.UTC)
-    localtz = utc.astimezone(timezone.get_current_timezone())
-    return localtz.strftime(fmt)
+    localtz = timezone.localtime(utctime)
+    return localtz.strftime("%b %d %Y %I:%M%p")
 
 @api_view(['GET', ])
 @permission_classes([IsAuthenticated, ])

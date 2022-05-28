@@ -7,7 +7,7 @@ from messenger import consumers
 application = ProtocolTypeRouter({
     'websocket': TokenAuthMiddleware(
         URLRouter([
-            re_path(r'ws/client', consumers.ChatConsumer),
+            re_path(r'ws/client', consumers.ChatConsumer.as_asgi()),
         ])
     ),
 })

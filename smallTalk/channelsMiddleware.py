@@ -36,6 +36,4 @@ class TokenAuthMiddlewareInstance:
             self.scope['user'] = await get_token(token_key)
 
         # Instantiate our inner application
-        inner = self.inner(self.scope)
-
-        return await inner(receive, send)
+        return await self.inner(self.scope, receive, send)
