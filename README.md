@@ -3,6 +3,10 @@
 - Our primary customers are business professionals working on teams
 - Making online messaging easier for groups working together on team projects
 
+![Image of login page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/loginScreenshot.png)
+![Image of messages page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/messagesScreenshot.png)
+![Image of navigator page](https://github.com/Kalatco/SmallTalk/blob/master/demoImages/navigatorScreenshot.png)
+
 ## Run mobile app for development
 
 1. Check that the [dedicated server](http://68.183.119.17/admin) is running.
