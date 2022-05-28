@@ -4,9 +4,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Icon from 'react-native-vector-icons/Feather';
-import { Provider } from "react-redux";
+import { Provider, connect } from "react-redux";
 import { store } from "./store/index";
-import { connect } from "react-redux";
 
 import SigninView from "./views/LoginView";
 import SettingsView from "./views/SettingsView";
@@ -102,7 +101,12 @@ const SideMenuScreen = () => (
 
 const RootStack = createStackNavigator();
 const RootStackScreen = (props) => (
-  <RootStack.Navigator headerMode="none">
+  <RootStack.Navigator
+    screenOptions={{
+      headerMode: 'none',
+      headerTintColor: 'white',
+      headerStyle: { backgroundColor: 'tomato' },
+    }}>
     {props.isSignedIn ? (
       <RootStack.Screen
         name="Home"

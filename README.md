@@ -8,7 +8,7 @@
 1. Check that the [dedicated server](http://68.183.119.17/admin) is running.
 2. Open a console and navigate to the project folder.
 3. Go to the `src` directory.
-4. Type `npm install` and `npm start`.
+4. Type `npm install` and `expo start --clear`.
 5. Run your phone emulator.
 6. A web browser should be open with the project console.
 7. Click `Run on Android` or `Run on iOS` depending on the operating system of your emulator.

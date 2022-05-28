@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput, View, Text, FlatList, Button, Alert} from "react-native";
+import { StyleSheet, TextInput, View, Text, Button, Alert} from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { connect } from "react-redux";
 import {Card, ListItem} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios'
 
 class SettingsView extends React.Component {

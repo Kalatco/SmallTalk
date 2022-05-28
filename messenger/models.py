@@ -28,6 +28,9 @@ class MyAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def get_by_natural_key(self, email):
+        return self.get(email__iexact=email)
+
     def create_superuser(self, email, username, password, first_name, last_name):
         user = self.create_user(
             email=self.normalize_email(email),
